@@ -1,0 +1,11 @@
+# Name,     Type, SubType,  Offset,   Size,     Flags
+nvs,        data, nvs,      0x9000,   0x6000,
+phy_init,   data, phy,      0xf000,   0x1000,
+factory,    app,  factory,  0x10000,  0x300000,
+# esp-zigbee-sdk (ZCZR) NVRAM: the stack abort()s at boot if these are absent.
+# Mirrors framework tools/partitions/zigbee_zczr.csv (zb_storage 16K + zb_fct 4K).
+# Placed BEFORE littlefs so the PlatformIO image builder (which picks the LAST
+# data/{spiffs,fat,littlefs} partition) still targets littlefs, not zb_fct.
+zb_storage, data, fat,      0x310000, 0x4000,
+zb_fct,     data, fat,      0x314000, 0x1000,
+littlefs,   data, littlefs, 0x315000, 0xEB000,

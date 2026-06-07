@@ -1,0 +1,12 @@
+{
+  "name": "gh-domain",
+  "version": "0.1.0",
+  "description": "Pure domain layer — entities, ports, policies. Builds in all envs.",
+  "build": {
+    "srcDir": "src",
+    "includeDir": "src"
+  },
+  "export": {
+    "include": "src/**"
+  }
+}

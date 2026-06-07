@@ -1,0 +1,556 @@
+#1 Breadboard 400 points - Transparent
+A breadboard ideal for combining with an Arduino!
+There are 100 points for the power supply, the centerpiece contains 300.
+At the bottom there is an adhesive layer for placement on a flat surface, system etc.
+Two (or more) of these breadboards can be linked together for a larger surface.
+
+Dimensions: 84 x 55 x 8.5mm
+Suitable for wires between the 20 and 29 AWG.
+
+#2 DuPont Jumper wire Male-Male 20cm 10 wires
+
+
+GENERAL
+Brand	No brand
+GENERAL PHYSICAL APPEARANCE
+Main color	Mixed
+Weight [g]	10
+Dimension X [mm]	25
+Dimension Y [mm]	2.5
+Dimension Z [mm]	200
+Experiment PCB friendly	Yes
+CONNECTORS
+Connector type(s)	Pin header male (2.54mm)
+Number of conductors/pins	10
+(Wires can be pulled apart)
+Number of pin rows	1
+Orientation	Straight
+Locking mechanism	None
+Pin shape	Square
+Connector/pin width [mm]	0.65
+Pin length [mm]	6
+WIRE/CABLE
+Core structure	Stranded
+Shielding	No
+Wire/cable length [m]	0.2
+PACKAGE CONTENTS
+Package contents	1x DuPont Jumper wire Male-Male 20cm 10 wires
+
+#3 Espressif ESP32-C6-DevKitM-1
+
+Description
+Reviews
+This development board from Espressif, with ESP-C6 microcontroller chip, which supports Zigbee and Thread as well as Wi-Fi and Bluetooth. The board has a USB-C connection with which it can be programmed and/or powered.
+
+See the following page for more information: Wiki
+
+Specifications
+
+GENERAL
+Brand	Espressif
+Manufacturer model/SKU	ESP32-C6-DevKitM-1
+Model revision	V1.0
+Features	Digital LED(s)
+Microcontroller (MCU)
+Programmable button(s)
+GENERAL PHYSICAL APPEARANCE
+Main color	Black
+Weight [g]	9
+Dimension X [mm]	49
+(excl. antenna)
+54
+(incl. antenna)
+Dimension Y [mm]	26
+Mounting options	Pin headers
+Form factor	Module (general)
+GENERAL ELECTRICAL PROPERTIES
+Minimum supply voltage [V DC]	5
+Maximum supply voltage [V DC]	5
+Minimum IO-pin input voltage [V]	3.3
+Maximum IO-pin input voltage [V]	3.3
+IO-pin output voltage [V]	3.3
+Maximum IO-pin source current [mA]	40
+Maximum IO-pin sink current [mA]	28
+MCU
+Manufacturer	Espressif
+Chip series	ESP32-C6
+Maximum clock frequency [MHz]	160
+Number of cores	1
+INTERNAL MEMORY
+SRAM [KB]	512
+PSRAM [MB]	0
+Flash memory [MB]	4
+EEPROM type	Emulated
+COMMUNICATION
+Hardware interface(s)	ADC
+I2C
+I2S
+PWM
+SPI
+GPIO
+UART
+USB CDC
+Number of IO-pins	22
+Maximum available hardware PWM channels	7
+Maximum available analog input pins (ADC)	7
+Maximum available analog output pins (DAC)	0
+Maximum available hardware UART interfaces	3
+Maximum available hardware I2C interfaces	2
+Maximum available hardware SPI interfaces	1
+USB to serial converter	CP2102
+Integrated into microcontroller
+WIRELESS COMMUNICATION
+Interface(s)	Wi-Fi
+Thread
+Zigbee
+Bluetooth
+Wi-Fi chip/SoC	ESP32-C6
+Wi-Fi frequency [GHz]	2.4
+Bluetooth chip/SoC	ESP32-C6
+Bluetooth version	5.3
+Supported Bluetooth standard(s)	LE
+Zigbee chip/SoC	ESP32-C6
+Zigbee frequency [GHz]	2.4
+Thread chip/SoC	ESP32-C6
+LIGHT SOURCE
+LED (driver) chip	WS2812B
+Light color	RGB
+CONNECTORS
+Power supply connector(s)	USB-C female
+Pin header male (2.54mm)
+IO-connector(s)	USB-C female
+Pin header male (2.54mm)
+Wi-Fi/Bluetooth antenna connector	Built-in antenna
+Zigbee/Thread antenna connector	Built-in antenna
+(same as Wi-Fi/bluetooth antenna)
+PACKAGE CONTENTS
+Package contents	1x ESP32-C6-DevKitM-1
+
+#4 ASAIR AM2315C I2C Temperature and Humidity Sensor
+
+
+GENERAL
+Brand	ASAIR (AOSONG)
+Manufacturer model/SKU	AM2315C
+Features	Humidity sensor
+Temperature sensor
+GENERAL PHYSICAL APPEARANCE
+Main color	Gray/silver
+Weight [g]	36
+Dimension X [mm]	16
+Dimension Y [mm]	16
+Dimension Z [mm]	100
+Mounting options	Mounting hole(s)
+(with mounting brackets)
+Form factor	Module (general)
+GENERAL ELECTRICAL PROPERTIES
+Minimum supply voltage [V DC]	2.2
+Maximum supply voltage [V DC]	5.5
+Minimum IO-pin input voltage [V]	2.2
+Maximum IO-pin input voltage [V]	5.5
+IO-pin output voltage [V]	Equal to supply voltage
+COMMUNICATION
+Hardware interface(s)	I2C
+Default I2C address	0x38
+Adjustable I2C address	No
+Built-in pull-up resistor(s) [kΩ]	None
+TEMPERATURE SENSOR
+Sensor (chip)	AM2315C
+Minimum measuring range [°C]	-40
+Maximum measuring range [°C]	80
+Smallest resolution [°C]	0.01
+Accuracy [±°C]	0.3
+(typical, see datasheet for more information)
+HUMIDITY SENSOR
+Sensor (chip)	AM2315C
+Minimum measuring range [% R.H.]	0
+Maximum measuring range [% R.H.]	100
+Smallest resolution [%R.H.]	0.024
+Accuracy [±%]	2.0
+(typical, see datasheet for more information)
+CONNECTORS
+Power supply connector(s)	Loose wire
+IO-connector(s)	Loose wire
+WIRE/CABLE
+Wire/cable length [m]	0.6
+PACKAGE CONTENTS
+Package contents	1x AM2315C
+1x Holder
+1x clamp
+2x Screw
+2x Plug
+
+#5 Brushless Water Pump - 12V
+
+Description
+Reviews
+A small centrifugal pump that has a relatively long lifespan due to the brushless motor. This makes it well suitable for use as a circulation pump, for example. The built-in driver for the brushless motor makes it easy to connect by simply applying voltage.
+
+Note: We cannot provide any warranty when this product is used with any liquid other than clean spring/tap water (non-potable).
+
+Specifications
+
+GENERAL
+Brand	No brand
+Minimum operating temperature [°C]	0
+Maximum operating temperature [°C]	90
+Lifespan [h]	20000
+Features	Pomp
+Motor
+Motor driver
+GENERAL PHYSICAL APPEARANCE
+Main color	Black
+Weight [g]	218
+Dimension X [mm]	48
+Dimension Y [mm]	48
+Dimension Z [mm]	66
+(excl. couplings)
+90
+(incl. couplings)
+Mounting options	Mounting hole(s)
+(in rubber rings)
+GENERAL ELECTRICAL PROPERTIES
+Maximum supply voltage [V DC]	12
+Minimum recommended supply current [A]	1.7
+Maximum power [W]	20
+Indication average current consumption [mA]	500
+(@12V DC, no load)
+MOTOR DRIVER
+Type	Driver
+Supported motor type(s)	Brushless DC motor
+Direction of rotation	Unidirectional
+ACTUATOR
+Actuator type	Brushless DC motor
+PUMP
+Pumping mechanism	Centrifugal
+Maximum pump flow [L/min]	12
+Maximum pump head [m]	6.0
+FLUID CONNECTOR
+Coupling type(s)	G1/2" external thread
+Flow orientation	Right-angled
+Flow direction	Unidirectional
+Material	POM
+Suitable liquids/gasses	Clean water
+CONNECTORS
+Motor connector(s)	Loose wire
+WIRE/CABLE
+Wire/cable length [m]	0.5
+(±0.05)
+PACKAGE CONTENTS
+Package contents	1x Pump
+2x Rubber mounting ring
+
+#6 USB PD Trigger Module
+
+Description
+Reviews
+This USB PD trigger module allows you to request specific voltages (5V, 9V, 12V, 15V and 20V) from a USB-PD power supply. In addition to USB PD, other protocols are also supported. Use the button to switch between voltages. If the LED next to a voltage is continuously lit, it means that the voltage is supported, if the LED flashes, the voltage is not supported.
+
+The solder pads on the bottom offer various functions when connected:
+
+S1: This can be used to lock a voltage. To set a different voltage, the button must be pressed while connecting to a PD power supply. The voltage can now be changed with the button. To save the desired voltage, the module must be disconnected from the PD power supply and reconnected without pressing the button. Now, the voltage cannot be changed with the button.
+F1: The module goes through all PD voltages from high to low and then ends at 5V. All supported PD voltages are then indicated with continuously lit LEDs.
+F2: Same as F1, except the module maintains the highest possible PD voltage.
+5V, 9V, 12V, 15V, 20V: The module immediately triggers the desired voltage.
+PD ONLY: The module only uses the USB PD protocol.
+DP, DM: Not used on this variant.
+Specifications
+
+GENERAL
+Brand	No brand
+GENERAL PHYSICAL APPEARANCE
+Main color	Black
+Weight [g]	5
+Dimension X [mm]	43
+Dimension Y [mm]	18
+Mounting options	Mounting hole(s)
+Diameter mounting hole(s) [mm]	2.2
+Form factor	Module (general)
+GENERAL ELECTRICAL PROPERTIES
+Minimum supply voltage [V DC]	5
+Maximum supply voltage [V DC]	20
+COMMUNICATION
+Hardware interface(s)	USB PD
+USB QC
+USB FCP (Huawei)
+USB AFC (Samsung)
+CONNECTORS
+Power supply connector(s)	USB-C female
+IO-connector(s)	USB-C female
+Input voltage connector(s)	USB-C female
+Output voltage connector(s)	Screw terminal
+PACKAGE CONTENTS
+Package contents	1x USB-PD Trigger Module
+
+#7 DuPont Jumper wire Male-Female 100cm 10 wires
+
+GENERAL
+Brand	No brand
+GENERAL PHYSICAL APPEARANCE
+Main color	Mixed
+Weight [g]	32
+Dimension X [mm]	25
+Dimension Y [mm]	2.5
+Dimension Z [mm]	1000
+Experiment PCB friendly	Yes
+CONNECTORS
+Connector type(s)	Pin header male (2.54mm)
+Pin header female (2.54mm)
+Number of conductors/pins	10
+(Wires can be pulled apart)
+Number of pin rows	1
+Orientation	Straight
+Locking mechanism	None
+Pin shape	Square
+Connector/pin width [mm]	0.65
+Pin length [mm]	6
+Pin insertion length [mm]	6
+WIRE/CABLE
+Core structure	Stranded
+Shielding	No
+Wire/cable length [m]	1
+PACKAGE CONTENTS
+Package contents	1x DuPont Jumper wire Male-Female 100cm 10 wires
+
+#8 DC-DC Step-down Buck Converter 5A - 7-32V to 5V output
+
+A small step-down buck converter.
+
+GENERAL
+Brand	No brand
+Manufacturer model/SKU	MINI 560 PRO
+Minimum operating temperature [°C]	-40
+Maximum operating temperature [°C]	85
+Features	Voltage converter
+GENERAL PHYSICAL APPEARANCE
+Main color	Blue
+Weight [g]	5
+Dimension X [mm]	33
+Dimension Y [mm]	18
+Mounting options	SMT
+Form factor	Module (general)
+VOLTAGE CONVERTER
+Voltage converter type	Buck
+Conversion	DC-DC
+Switching method	Non-synchronous
+Isolated	No
+Output voltage type	Fixed
+Constant current function	No
+Maximum switching frequency [kHz]	500
+Minimum input voltage [V DC]	7.0
+Maximum input voltage [V DC]	32
+Minimum output voltage [V DC]	5
+Maximum output voltage [V DC]	5
+Minimum input and output voltage difference [V DC]	2
+Maximum output current [A]	5.0
+(With cooling)
+2.5
+(without cooling)
+Maximum output power [W]	25
+Safety features	Temperature
+Short circuit
+Overcurrent (output)
+CONNECTORS
+Input voltage connector(s)	Solder pin(s) (SMT)
+Through hole solder pin(s) (2.54mm)
+Output voltage connector(s)	Solder pin(s) (SMT)
+Through hole solder pin(s) (2.54mm)
+PACKAGE CONTENTS
+Package contents	1x DC-DC buck converter
+
+#9 Chirp! Capacitive Soil Moisture Sensor with Cable - I2C
+
+This is the I2C variant of the Chirp! Plant Watering Alarm. This variant has no buzzer, but can be read out via I2C. Examples are available for Arduino and Raspberry Pi, among others.
+
+The sensor differs from other soil moisture sensors by the capacitive measurement instead of a resistive measurement. This makes the sensor a lot more resistant to corrosion and therefore lasts longer.
+
+Specifications:
+
+Supply voltage: 3.3 - 5V DC
+Signal voltage: 3.3 - 5V
+Current:
+Sleep mode: ~1.1mA (5V), ~0.7mA (3.3V)
+Single measurement: ~14mA (5V), ~7.8mA (3.3V)
+Constant measurements: ~4.5mA (5V), ~2.8mA (3.3V)
+Measuring method: Capacitive
+Communication: I2C*
+I2C address: 0x20 (adjustable in software)
+Cable length: ~1m
+Dimensions PCB: 149 x 18mm
+Pinout:
+
+Red: VCC
+Black: GND
+Blue/Green: SDA (I2C)
+Yellow: SCL (I2C)
+Package contents:
+
+1x Chirp! Capacitive Soil Moisture Sensor with Cable
+For more information on programming this sensor, see the following page: Github-I2C-Moisture -Sensor.
+
+*Note: There are no pull-up resistors on the sensor for the I2C bus yet.
+
+#10 10Ω-1MΩ Resistor Set
+
+Specifications:
+
+1% Metal film wire resistance
+1/4 Watt
+About 20 pieces per resistance value
+This set contains the following values:
+
+10Ω
+22Ω
+47Ω
+100Ω
+150Ω
+200Ω
+220Ω
+270Ω
+330Ω
+470Ω
+510Ω
+680Ω
+1KΩ
+2KΩ
+2.2KΩ
+3.3KΩ
+4.7KΩ
+5.1KΩ
+6.8KΩ
+10KΩ
+20KΩ
+47KΩ
+51KΩ
+68KΩ
+100KΩ
+220KΩ
+300KΩ
+470KΩ
+680KΩ
+1MΩ
+Note: It may happen that the supplied set contains minor differences (eg. that 20Ω instead of 22Ω is supplied)
+
+#11 5V Relay 2-Channel High-active or Low-active
+
+An easy to use relay module that can be set to high- or low-active.
+
+Pinout:
+
+DC+: 5V supply voltage
+DC-: Ground/GND
+IN1-IN2: Signal pins
+NO: Relay normally open
+COM: Relay common
+NC: Relay normally closed
+Note: In the low-active setting there is ~5V on the signal pin, which makes it often not suitable for 3.3V microcontrollers.
+
+Specifications
+
+GENERAL
+Brand	No brand
+Features	Electric switch
+GENERAL PHYSICAL APPEARANCE
+Main color	Red
+Weight [g]	27
+Dimension X [mm]	50
+Dimension Y [mm]	41
+Dimension Z [mm]	19
+Mounting options	Mounting hole(s)
+Diameter mounting hole(s) [mm]	3.2
+Form factor	Module (general)
+GENERAL ELECTRICAL PROPERTIES
+Minimum supply voltage [V DC]	5
+Maximum supply voltage [V DC]	5
+Minimum recommended supply current [A]	0.3
+Minimum IO-pin input voltage [V]	3.3
+Maximum IO-pin input voltage [V]	5
+Maximum IO-pin sink current [mA]	6
+COMMUNICATION
+Hardware interface(s)	Digital (low-active)
+Digital (high-active)
+(adjustable with jumpers)
+SWITCH
+Switching method	Electrical
+Switch type	Mechanical relay
+Number of channels/gangs	2
+Contact(s)	NO (normally open)
+NC (normally closed)
+Maximum switching voltage [V AC]	250
+Maximum switching voltage [V DC]	30
+Switching voltage equal to supply voltage	No
+Maximum switch resistance [Ω]	0.1
+Maximum switching current per channel (resistive load) [A]	10
+Current per engaged relay [mA]	70
+CONNECTORS
+Power supply connector(s)	Screw terminal
+IO-connector(s)	Screw terminal
+Switch connector(s)	Screw terminal
+PACKAGE CONTENTS
+Package contents	1x 5V Relay 2-Channel High-active or Low-active
+
+#12 DuPont Jumper wire Male-Female 30cm 10 wires
+
+The DuPont wires are very handy for prototyping, for example, in combination with a breadboard. The different colors make it possible to distinguish the different signals from each other.
+Specifications
+
+GENERAL
+Brand	No brand
+GENERAL PHYSICAL APPEARANCE
+Main color	Mixed
+Weight [g]	11
+Dimension X [mm]	25
+Dimension Y [mm]	2.5
+Dimension Z [mm]	300
+Experiment PCB friendly	Yes
+CONNECTORS
+Connector type(s)	Pin header male (2.54mm)
+Pin header female (2.54mm)
+Number of conductors/pins	10
+(Wires can be pulled apart)
+Number of pin rows	1
+Orientation	Straight
+Locking mechanism	None
+Pin shape	Square
+Connector/pin width [mm]	0.65
+Pin length [mm]	6
+Pin insertion length [mm]	6
+WIRE/CABLE
+Core structure	Stranded
+Shielding	No
+Wire/cable length [m]	0.3
+PACKAGE CONTENTS
+Package contents	1x DuPont Jumper wire Male-Female 30cm 10 wires
+
+#13 DuPont Jumper wire Male-Male 30cm 10 wires
+
+The DuPont wires are very handy for prototyping, for example, in combination with a breadboard. The different colors make it possible to distinguish the different signals from each other.
+Specifications
+
+GENERAL
+Brand	No brand
+GENERAL PHYSICAL APPEARANCE
+Main color	Mixed
+Weight [g]	11
+Dimension X [mm]	25
+Dimension Y [mm]	2.5
+Dimension Z [mm]	300
+Experiment PCB friendly	Yes
+CONNECTORS
+Connector type(s)	Pin header male (2.54mm)
+Number of conductors/pins	10
+(Wires can be pulled apart)
+Number of pin rows	1
+Orientation	Straight
+Locking mechanism	None
+Pin shape	Square
+Connector/pin width [mm]	0.65
+Pin length [mm]	6
+WIRE/CABLE
+Core structure	Stranded
+Shielding	No
+Wire/cable length [m]	0.3
+PACKAGE CONTENTS
+Package contents	1x DuPont Jumper wire Male-Male 30cm 10 wires
+
+#14 DuPont Jumper wire Female-Female 20cm 10 wires

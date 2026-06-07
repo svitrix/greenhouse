@@ -1,0 +1,19 @@
+.detail     { padding: 12px; max-width: 720px; margin: 0 auto; }
+.back       { display: inline-block; padding: 4px 0; text-decoration: none;
+              color: var(--text-muted, #888); margin-bottom: 8px; }
+.tabs       { display: flex; gap: 8px; padding: 8px 0; }
+.tab, .tabActive { padding: 4px 12px; border-radius: 6px;
+              border: 1px solid var(--border, #ddd); cursor: pointer;
+              background: var(--bg-elev, #f5f5f5); }
+.tabActive  { background: var(--accent-fresh, #2ecc71); color: white;
+              border-color: transparent; }
+.chartBlock { padding: 12px; border-radius: 10px; margin: 8px 0;
+              background: var(--bg-card, #fff);
+              border: 1px solid var(--border, #ddd); }
+.chartHead  { display: flex; justify-content: space-between;
+              margin-bottom: 4px; }
+.forgetBtn  { padding: 8px 16px; border-radius: 6px; cursor: pointer;
+              background: var(--bg-elev, #f5f5f5);
+              border: 1px solid #e74c3c; color: #e74c3c;
+              margin-top: 16px; }
+.loading    { padding: 20px; text-align: center; color: var(--text-muted, #888); }

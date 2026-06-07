@@ -1,0 +1,37 @@
+services:
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    restart: unless-stopped
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: dev
+      POSTGRES_DB: greenhouse
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d greenhouse"]
+      interval: 5s
+      retries: 10
+
+  hub:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      timescaledb: { condition: service_healthy }
+    ports: ["8000:8000"]
+    environment:
+      DB_URL: postgresql+asyncpg://postgres:dev@timescaledb/greenhouse
+      DEVICE_API_KEYS: '{"gh-a1b2c3d4": "dev-secret-key"}'
+      LOG_LEVEL: INFO
+
+  dashboard:
+    build:
+      context: ../dashboard
+      args:
+        VITE_BACKEND_URL: http://localhost:8000
+    restart: unless-stopped
+    depends_on: [hub]
+    ports: ["3000:80"]
+
+volumes:
+  pgdata:

@@ -1,0 +1,12 @@
+{
+  "name": "gh-protocol",
+  "version": "0.1.0",
+  "description": "Wire-format identifiers shared between coordinator and sensor-node (Zigbee ZCL cluster IDs, custom attribute IDs). Populated in Phase B.",
+  "build": {
+    "srcDir": "src",
+    "includeDir": "src"
+  },
+  "export": {
+    "include": "src/**"
+  }
+}

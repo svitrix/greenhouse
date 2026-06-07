@@ -1,0 +1,30 @@
+{
+  "name": "greenhouse-coordinator-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@preact/signals": "^1.2.3",
+    "preact": "^10.22.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.8.2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/preact": "^3.2.4",
+    "@types/node": "^20.12.0",
+    "jsdom": "^29.1.1",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.0",
+    "vite-plugin-compression": "^0.5.1",
+    "vitest": "^1.6.0"
+  }
+}

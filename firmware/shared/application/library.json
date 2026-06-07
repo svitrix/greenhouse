@@ -1,0 +1,16 @@
+{
+  "name": "gh-app-shared",
+  "version": "0.1.0",
+  "description": "Shared application pieces: SoilNormalizer, JsonTelemetryFormatter, AppConfig. Platform-neutral, builds in native and ESP envs.",
+  "dependencies": {
+    "gh-domain": "*",
+    "bblanchon/ArduinoJson": "^7.1.0"
+  },
+  "build": {
+    "srcDir": "src",
+    "includeDir": "src"
+  },
+  "export": {
+    "include": "src/**"
+  }
+}

@@ -1,0 +1,158 @@
+{
+  "version": 1,
+  "author": "Greenhouse ESP32 — sensor-node (battery-powered Zigbee End Device)",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-text",
+      "id": "title",
+      "top": -520,
+      "left": -300,
+      "attrs": {
+        "text": "Sensor-node — ESP32-C6 SuperMini + Murata 18650 + AM2315C + Chirp!",
+        "fontSize": "20"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "subtitle",
+      "top": -490,
+      "left": -300,
+      "attrs": {
+        "text": "Battery-powered Zigbee sleepy end device.  Sensors gated through AO3401 p-MOSFET on GP4.",
+        "fontSize": "13",
+        "color": "gray"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "proxy_note",
+      "top": -460,
+      "left": -300,
+      "attrs": {
+        "text": "⚠  Wokwi-proxies:  ESP32-C6 SuperMini ≈ DevKitM-1 (same chip/GPIO, different form factor) ·  AM2315C ≈ DHT22 ·  Chirp! ≈ potentiometer",
+        "fontSize": "11",
+        "color": "darkorange"
+      }
+    },
+
+    { "type": "wokwi-text", "id": "n_legend", "top": -460, "left": 320, "attrs": {
+        "text": "Wire colors:\n red = +BAT / 3V3 always-on   pink = gated 3V3 (sensors)\n black = GND   green = SDA   gold = SCL\n orange = GP4 (MOSFET gate)   white = GP0 (ADC, battery sense)",
+        "fontSize": "11", "color": "black" } },
+
+    {
+      "type": "board-esp32-c6-devkitm-1",
+      "id": "esp",
+      "top": -120,
+      "left": -80,
+      "attrs": {}
+    },
+    { "type": "wokwi-text", "id": "n_esp", "top": -260, "left": -100, "attrs": {
+        "text": "#3  ESP32-C6 SuperMini\n(Wokwi proxy: DevKitM-1)\nPower in: 5V pin = BAT+ (from protection P+)\nLDO internal → 3V3 OUT pin (always-on)\nUSB-C on top = charge via onboard TP4057",
+        "fontSize": "11", "color": "navy" } },
+
+    {
+      "type": "wokwi-breadboard-half",
+      "id": "bb1",
+      "top": 110,
+      "left": -150,
+      "attrs": {}
+    },
+    { "type": "wokwi-text", "id": "n_bb", "top": 300, "left": -150, "attrs": {
+        "text": "Breadboard rails:\n top+   = +BAT     top−   = GND\n bot+   = gated 3V3   bot−   = GND  (jumper to top−)",
+        "fontSize": "11", "color": "black" } },
+
+    { "type": "wokwi-vcc", "id": "v_bat", "top": -40, "left": -520, "attrs": { "label": "+BAT  3.2-4.2V" } },
+    { "type": "wokwi-gnd", "id": "gnd_bat", "top":  60, "left": -520, "attrs": { "label": "GND (cell)" } },
+    { "type": "wokwi-text", "id": "n_bat", "top": -180, "left": -560, "attrs": {
+        "text": "#2  Murata US18650VTC6\n3120 mAh · 3.2 – 4.2 V\n#4  in leaf-spring holder\n(wokwi: shown as VCC+GND)",
+        "fontSize": "11", "color": "darkred" } },
+
+    { "type": "wokwi-resistor", "id": "prot", "top": 0, "left": -340, "attrs": { "value": "0.05", "label": "Protection DW01+FS8205" } },
+    { "type": "wokwi-text", "id": "n_prot", "top": -100, "left": -360, "attrs": {
+        "text": "#5  1S Li-ion Protection\nDW01 + FS8205\ncut-off ≤ 2.5 V\n(wokwi: shown as a small resistor)",
+        "fontSize": "11", "color": "darkred" } },
+
+    { "type": "wokwi-mosfet-pmos", "id": "q1", "top": -100, "left": 190, "attrs": {} },
+    { "type": "wokwi-text", "id": "n_q1", "top": -200, "left": 130, "attrs": {
+        "text": "AO3401  p-MOSFET (high-side gate)\nS ← 3V3 OUT   ·   G ← GP4 via R_G   ·   D → gated 3V3 rail\nGP4 = LOW → sensors ON\nGP4 = HIGH/floating → R_PU keeps gate=S → OFF",
+        "fontSize": "11", "color": "purple" } },
+
+    { "type": "wokwi-resistor", "id": "r_g",  "top":  20, "left":  40, "attrs": { "value": "100000", "label": "R_G 100k" } },
+    { "type": "wokwi-resistor", "id": "r_pu", "top": -90, "left": 280, "attrs": { "value": "100000", "label": "R_PU 100k" } },
+
+    { "type": "wokwi-resistor", "id": "r_sda", "top":  30, "left": 350, "attrs": { "value": "4700", "label": "R1 4k7 SDA↑" } },
+    { "type": "wokwi-resistor", "id": "r_scl", "top":  70, "left": 350, "attrs": { "value": "4700", "label": "R2 4k7 SCL↑" } },
+    { "type": "wokwi-text", "id": "n_pullup", "top": -10, "left": 350, "attrs": {
+        "text": "#10  R1, R2 = 4k7 I²C pull-ups\nto gated 3V3 (only when sensors on)",
+        "fontSize": "11", "color": "red" } },
+
+    { "type": "wokwi-resistor", "id": "r3", "top":  30, "left": 480, "attrs": { "value": "100000", "label": "R3 100k" } },
+    { "type": "wokwi-resistor", "id": "r4", "top":  70, "left": 480, "attrs": { "value": "100000", "label": "R4 100k" } },
+    { "type": "wokwi-text", "id": "n_div", "top": -10, "left": 470, "attrs": {
+        "text": "Battery sense divider\nR3 + R4 = 100k+100k → GP0 (ADC1_CH0)\nV_ADC ≈ V_BAT / 2\nsleep cost ≈ 21 µA",
+        "fontSize": "11", "color": "darkgreen" } },
+
+    {
+      "type": "wokwi-dht22",
+      "id": "am2315c",
+      "top": -340,
+      "left": 600,
+      "attrs": { "temperature": "24", "humidity": "55" }
+    },
+    { "type": "wokwi-text", "id": "n_am", "top": -400, "left": 600, "attrs": {
+        "text": "#4  ASAIR AM2315C  I²C @ 0x38\n(wokwi proxy: DHT22)\nVCC = gated 3V3 · SDA = GP6 · SCL = GP7\n⚠ Power at 3V3 ONLY, NOT 5V!",
+        "fontSize": "11", "color": "blue" } },
+
+    {
+      "type": "wokwi-potentiometer",
+      "id": "chirp",
+      "top": -120,
+      "left": 600,
+      "attrs": { "value": "300" }
+    },
+    { "type": "wokwi-text", "id": "n_chirp", "top": -180, "left": 600, "attrs": {
+        "text": "#9  Chirp! soil moisture  I²C @ 0x20\n(wokwi proxy: potentiometer)\nVCC = gated 3V3 · SDA = GP6 · SCL = GP7\nR=VCC · B=GND · Bl=SDA · Y=SCL\ncalibration (raw_dry/raw_wet) — on coordinator",
+        "fontSize": "11", "color": "blue" } }
+  ],
+
+  "connections": [
+    [ "v_bat:VCC",     "prot:1",        "blue",   [] ],
+    [ "prot:2",        "bb1:tp.1",      "red",    [] ],
+    [ "gnd_bat:GND",   "bb1:tn.1",      "black",  [] ],
+
+    [ "bb1:tn.30",     "bb1:bn.30",     "black",  [ "v40", "h0" ] ],
+
+    [ "esp:5V",        "bb1:tp.5",      "red",    [] ],
+    [ "esp:GND.1",     "bb1:tn.5",      "black",  [] ],
+
+    [ "esp:3V3",       "q1:S",          "red",    [] ],
+    [ "r_pu:1",        "q1:S",          "red",    [] ],
+    [ "r_pu:2",        "q1:G",          "orange", [] ],
+
+    [ "esp:4",         "r_g:1",         "orange", [] ],
+    [ "r_g:2",         "q1:G",          "orange", [] ],
+
+    [ "q1:D",          "bb1:bp.20",     "pink",   [] ],
+
+    [ "am2315c:VCC",   "bb1:bp.15",     "pink",   [] ],
+    [ "am2315c:GND",   "bb1:bn.15",     "black",  [] ],
+    [ "am2315c:SDA",   "esp:6",         "green",  [] ],
+
+    [ "chirp:VCC",     "bb1:bp.10",     "pink",   [] ],
+    [ "chirp:GND",     "bb1:bn.10",     "black",  [] ],
+    [ "chirp:SIG",     "esp:7",         "gold",   [] ],
+
+    [ "r_sda:1",       "esp:6",         "green",  [] ],
+    [ "r_sda:2",       "bb1:bp.25",     "pink",   [] ],
+    [ "r_scl:1",       "esp:7",         "gold",   [] ],
+    [ "r_scl:2",       "bb1:bp.26",     "pink",   [] ],
+
+    [ "r3:1",          "bb1:tp.20",     "red",    [] ],
+    [ "r3:2",          "esp:0",         "white",  [] ],
+    [ "r4:1",          "esp:0",         "white",  [] ],
+    [ "r4:2",          "bb1:tn.20",     "black",  [] ]
+  ],
+
+  "dependencies": {}
+}

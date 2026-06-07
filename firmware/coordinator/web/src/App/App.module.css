@@ -1,0 +1,16 @@
+.app {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: env(safe-area-inset-top) var(--sp-4) calc(env(safe-area-inset-bottom) + var(--sp-5));
+}
+.hero {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding: 0 4px var(--sp-3);
+}
+.greeting {
+  font-family: var(--ff-display);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--c-ink-2);
+  letter-spacing: -.005em;
+}

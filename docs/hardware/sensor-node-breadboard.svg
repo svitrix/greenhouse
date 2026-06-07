@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 980" font-family="-apple-system, Segoe UI, sans-serif">
+  <defs>
+    <!-- Tiny breadboard hole pattern -->
+    <pattern id="bbHoles" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+      <rect width="20" height="20" fill="#f5f0e0"/>
+      <circle cx="10" cy="10" r="2" fill="#444"/>
+    </pattern>
+    <!-- Wire ends (terminal dots) -->
+    <radialGradient id="dot" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%"  stop-color="#fff"/>
+      <stop offset="100%" stop-color="#222"/>
+    </radialGradient>
+  </defs>
+
+  <style>
+    .ttl   { font-size: 22px; font-weight: bold; }
+    .sub   { font-size: 13px; fill: #555; }
+    .pin   { font-size: 10px; font-weight: bold; fill: #222; }
+    .pcb-l { font-size: 11px; font-weight: bold; fill: #fff; text-anchor: middle; }
+    .lbl   { font-size: 12px; fill: #222; }
+    .net   { font-size: 11px; fill: #333; font-style: italic; }
+    .num   { font-size: 9px; fill: #888; }
+
+    .w-bat   { stroke: #d00000; stroke-width: 3; fill: none; stroke-linecap: round; }
+    .w-gnd   { stroke: #000;    stroke-width: 3; fill: none; stroke-linecap: round; }
+    .w-3v3   { stroke: #ff8000; stroke-width: 3; fill: none; stroke-linecap: round; }
+    .w-3v3g  { stroke: #c000a0; stroke-width: 3; fill: none; stroke-linecap: round; }
+    .w-sda   { stroke: #0080d0; stroke-width: 3; fill: none; stroke-linecap: round; }
+    .w-scl   { stroke: #b08000; stroke-width: 3; fill: none; stroke-linecap: round; }
+    .w-gpio  { stroke: #009040; stroke-width: 3; fill: none; stroke-linecap: round; }
+  </style>
+
+  <!-- ====================== TITLE ====================== -->
+  <text x="720" y="34" text-anchor="middle" class="ttl">Sensor-node — breadboard layout</text>
+  <text x="720" y="54" text-anchor="middle" class="sub">ESP32-C6 SuperMini · Murata US18650VTC6 · AM2315C · Chirp! — component placement and wiring</text>
+
+  <!-- ====================== BREADBOARD ====================== -->
+  <g id="breadboard">
+    <!-- main body -->
+    <rect x="180" y="370" width="1080" height="370" rx="10" fill="#f5f0e0" stroke="#888" stroke-width="2"/>
+
+    <!-- top power rails -->
+    <rect x="200" y="390" width="1040" height="20" fill="url(#bbHoles)"/>
+    <line x1="200" y1="392" x2="1240" y2="392" stroke="#3060c0" stroke-width="2"/>
+    <text x="170" y="396" class="lbl" fill="#3060c0">−</text>
+    <text x="146" y="402" class="num">GND  (top blue rail)</text>
+    <line x1="200" y1="408" x2="1240" y2="408" stroke="#c03030" stroke-width="2"/>
+    <text x="170" y="412" class="lbl" fill="#c03030">+</text>
+    <text x="146" y="426" class="num">+BAT  (top red rail)</text>
+
+    <!-- main top half (rows 1-5) -->
+    <rect x="200" y="430" width="1040" height="100" fill="url(#bbHoles)"/>
+
+    <!-- center groove -->
+    <rect x="200" y="540" width="1040" height="14" fill="#dcd5b8"/>
+    <line x1="200" y1="547" x2="1240" y2="547" stroke="#aaa" stroke-width="1"/>
+
+    <!-- main bottom half (rows 6-10) -->
+    <rect x="200" y="564" width="1040" height="100" fill="url(#bbHoles)"/>
+
+    <!-- bottom power rails -->
+    <rect x="200" y="680" width="1040" height="20" fill="url(#bbHoles)"/>
+    <line x1="200" y1="682" x2="1240" y2="682" stroke="#3060c0" stroke-width="2"/>
+    <text x="170" y="686" class="lbl" fill="#3060c0">−</text>
+    <text x="146" y="676" class="num">GND  (bottom blue rail)</text>
+    <line x1="200" y1="698" x2="1240" y2="698" stroke="#c03030" stroke-width="2"/>
+    <text x="170" y="702" class="lbl" fill="#c03030">+</text>
+    <text x="146" y="714" class="num">gated 3V3  (bottom red rail)</text>
+
+    <!-- column markers (every 5) -->
+    <g class="num">
+      <text x="220" y="385" text-anchor="middle">1</text>
+      <text x="320" y="385" text-anchor="middle">5</text>
+      <text x="420" y="385" text-anchor="middle">10</text>
+      <text x="520" y="385" text-anchor="middle">15</text>
+      <text x="620" y="385" text-anchor="middle">20</text>
+      <text x="720" y="385" text-anchor="middle">25</text>
+      <text x="820" y="385" text-anchor="middle">30</text>
+      <text x="920" y="385" text-anchor="middle">35</text>
+      <text x="1020" y="385" text-anchor="middle">40</text>
+      <text x="1120" y="385" text-anchor="middle">45</text>
+      <text x="1220" y="385" text-anchor="middle">50</text>
+    </g>
+  </g>
+
+  <!-- ====================== SUPERMINI on breadboard ====================== -->
+  <!-- Sits straddling center groove, columns ~5-20 -->
+  <g id="supermini">
+    <!-- PCB (dark navy) -->
+    <rect x="320" y="440" width="280" height="160" rx="4" fill="#1a3060" stroke="#000" stroke-width="1.5"/>
+    <!-- USB-C at top -->
+    <rect x="430" y="430" width="60" height="20" rx="2" fill="#888" stroke="#222"/>
+    <text x="460" y="445" class="pcb-l">USB-C</text>
+    <!-- chip in middle -->
+    <rect x="430" y="490" width="60" height="60" fill="#222" stroke="#000"/>
+    <text x="460" y="525" class="pcb-l">ESP32-C6</text>
+    <!-- WS2812 (small LED) -->
+    <rect x="500" y="500" width="14" height="14" fill="#fff" stroke="#888"/>
+    <text x="507" y="492" class="num" text-anchor="middle">WS2812</text>
+    <!-- label -->
+    <text x="460" y="465" class="pcb-l">SuperMini</text>
+
+    <!-- LEFT side pin headers (visible solder pads) -->
+    <!-- Left column = signal pins on the LEFT edge of PCB -->
+    <g>
+      <!-- 5V pin (top-left of left header is actually top — let's put it at top-left visually) -->
+      <circle cx="330" cy="450" r="4" fill="#c0a060" stroke="#000"/>
+      <text x="345" y="454" class="pin" fill="#fff">5V</text>
+      <circle cx="330" cy="468" r="4" fill="#c0a060" stroke="#000"/>
+      <text x="345" y="472" class="pin" fill="#fff">GND</text>
+      <circle cx="330" cy="486" r="4" fill="#c0a060" stroke="#000"/>
+      <text x="345" y="490" class="pin" fill="#fff">3V3</text>
+      <circle cx="330" cy="504" r="4" fill="#c0a060" stroke="#000"/>
+      <text x="345" y="508" class="pin" fill="#fff">GP0</text>
+      <circle cx="330" cy="522" r="4" fill="#c0a060" stroke="#000"/>
+      <text x="345" y="526" class="pin" fill="#fff">GP1</text>
+      <circle cx="330" cy="540" r="4" fill="#c0a060" stroke="#000"/>
+      <text x="345" y="544" class="pin" fill="#fff">GP2</text>
+      <circle cx="330" cy="558" r="4" fill="#c0a060" stroke="#000"/>
+      <text x="345" y="562" class="pin" fill="#fff">GP3</text>
+      <circle cx="330" cy="576" r="4" fill="#c0a060" stroke="#000"/>
+      <text x="345" y="580" class="pin" fill="#fff">GP4</text>
+      <circle cx="330" cy="594" r="4" fill="#c0a060" stroke="#000"/>
+      <text x="345" y="598" class="pin" fill="#fff">GP5</text>
+    </g>
+    <!-- RIGHT side pin headers -->
+    <g>
+      <circle cx="590" cy="450" r="4" fill="#c0a060" stroke="#000"/>
+      <text x="575" y="454" class="pin" fill="#fff" text-anchor="end">GP15</text>
+      <circle cx="590" cy="468" r="4" fill="#c0a060" stroke="#000"/>
+      <text x="575" y="472" class="pin" fill="#fff" text-anchor="end">GP14</text>
+      <circle cx="590" cy="486" r="4" fill="#c0a060" stroke="#000"/>
+      <text x="575" y="490" class="pin" fill="#fff" text-anchor="end">(NC)</text>
+      <circle cx="590" cy="504" r="4" fill="#c0a060" stroke="#000"/>
+      <text x="575" y="508" class="pin" fill="#fff" text-anchor="end">(NC)</text>
+      <circle cx="590" cy="522" r="4" fill="#c0a060" stroke="#000"/>
+      <text x="575" y="526" class="pin" fill="#fff" text-anchor="end">GP7</text>
+      <circle cx="590" cy="540" r="4" fill="#c0a060" stroke="#000"/>
+      <text x="575" y="544" class="pin" fill="#fff" text-anchor="end">GP6</text>
+      <circle cx="590" cy="558" r="4" fill="#c0a060" stroke="#000"/>
+      <text x="575" y="562" class="pin" fill="#fff" text-anchor="end">GP8</text>
+      <circle cx="590" cy="576" r="4" fill="#c0a060" stroke="#000"/>
+      <text x="575" y="580" class="pin" fill="#fff" text-anchor="end">GP18</text>
+      <circle cx="590" cy="594" r="4" fill="#c0a060" stroke="#000"/>
+      <text x="575" y="598" class="pin" fill="#fff" text-anchor="end">GP19</text>
+    </g>
+  </g>
+
+  <!-- ====================== BATTERY HOLDER (top-left, off breadboard) ====================== -->
+  <g id="holder">
+    <!-- holder body -->
+    <rect x="40" y="80" width="320" height="120" rx="14" fill="#dcdcdc" stroke="#777" stroke-width="1.5"/>
+    <rect x="50" y="90" width="300" height="100" rx="10" fill="#ebebeb"/>
+    <!-- cell wrap (green Murata) -->
+    <rect x="70" y="110" width="260" height="60" rx="30" fill="#1f6a30" stroke="#0a3a1a" stroke-width="1.5"/>
+    <text x="200" y="140" class="pcb-l">Murata</text>
+    <text x="200" y="156" class="pcb-l" font-weight="normal">US18650VTC6 · 3120 mAh</text>
+    <!-- end caps -->
+    <rect x="60" y="118" width="10" height="44" fill="#cdcdcd" stroke="#888"/>
+    <rect x="330" y="118" width="10" height="44" fill="#cdcdcd" stroke="#888"/>
+    <rect x="340" y="130" width="6" height="20" fill="#cdcdcd" stroke="#888"/>
+    <!-- +/- labels on holder -->
+    <text x="50" y="220" class="lbl" fill="#000">− BAT−</text>
+    <text x="330" y="220" class="lbl" fill="#c00" text-anchor="end">+ BAT+</text>
+  </g>
+
+  <!-- ====================== PROTECTION MODULE ====================== -->
+  <g id="protection">
+    <!-- PCB (green) -->
+    <rect x="40" y="240" width="170" height="80" rx="3" fill="#1a6b2e" stroke="#0a3a1a" stroke-width="1.5"/>
+    <text x="125" y="262" class="pcb-l">1S Protection</text>
+    <text x="125" y="278" class="pcb-l" font-weight="normal">DW01 + FS8205</text>
+    <!-- chips -->
+    <rect x="60" y="290" width="20" height="20" fill="#222" stroke="#000"/>
+    <text x="70" y="304" class="pin" fill="#fff" text-anchor="middle">DW</text>
+    <rect x="120" y="293" width="24" height="14" fill="#222" stroke="#000"/>
+    <text x="132" y="304" class="pin" fill="#fff" text-anchor="middle">FS</text>
+
+    <!-- B+ pad (top-left) -->
+    <circle cx="55" cy="248" r="4" fill="#c0a060" stroke="#000"/>
+    <text x="64" y="252" class="pin">B+</text>
+    <!-- B− pad (bottom-left) -->
+    <circle cx="55" cy="312" r="4" fill="#c0a060" stroke="#000"/>
+    <text x="64" y="316" class="pin">B−</text>
+    <!-- P+ pad (top-right) -->
+    <circle cx="195" cy="248" r="4" fill="#c0a060" stroke="#000"/>
+    <text x="186" y="252" class="pin" text-anchor="end">P+</text>
+    <!-- P− pad (bottom-right) -->
+    <circle cx="195" cy="312" r="4" fill="#c0a060" stroke="#000"/>
+    <text x="186" y="316" class="pin" text-anchor="end">P−</text>
+  </g>
+
+  <!-- ====================== AO3401 P-MOSFET on breakout (right of SuperMini on breadboard) ====================== -->
+  <g id="mosfet">
+    <!-- small breakout PCB -->
+    <rect x="660" y="490" width="80" height="50" rx="2" fill="#3a3a3a" stroke="#000" stroke-width="1.5"/>
+    <text x="700" y="510" class="pcb-l">AO3401</text>
+    <text x="700" y="524" class="pcb-l" font-weight="normal">p-MOSFET</text>
+    <text x="700" y="538" class="pcb-l" font-weight="normal" font-size="9">(SOT-23 on breakout)</text>
+    <!-- 3 pins on top going into breadboard -->
+    <circle cx="675" cy="490" r="3.5" fill="#c0a060" stroke="#000"/>
+    <text x="675" y="484" class="pin" text-anchor="middle">S</text>
+    <circle cx="700" cy="490" r="3.5" fill="#c0a060" stroke="#000"/>
+    <text x="700" y="484" class="pin" text-anchor="middle">G</text>
+    <circle cx="725" cy="490" r="3.5" fill="#c0a060" stroke="#000"/>
+    <text x="725" y="484" class="pin" text-anchor="middle">D</text>
+  </g>
+
+  <!-- ====================== RESISTORS on breadboard ====================== -->
+  <!-- R_PU 100k between MOSFET S and G (gate pull-up, keeps MOSFET OFF by default) -->
+  <g id="r-pu">
+    <line x1="675" y1="470" x2="700" y2="470" stroke="#fff5d8" stroke-width="10"/>
+    <line x1="675" y1="470" x2="700" y2="470" stroke="#cbb478" stroke-width="10" stroke-dasharray="4,3"/>
+    <rect x="680" y="466" width="3" height="8" fill="#a07020"/>
+    <rect x="688" y="466" width="3" height="8" fill="#000"/>
+    <rect x="694" y="466" width="3" height="8" fill="#a07020"/>
+    <text x="687" y="462" class="pin" text-anchor="middle">R_PU 100k</text>
+    <circle cx="675" cy="470" r="3" fill="#c0a060" stroke="#000"/>
+    <circle cx="700" cy="470" r="3" fill="#c0a060" stroke="#000"/>
+  </g>
+
+  <!-- R_G 100k between GP4 and MOSFET G (gate series) -->
+  <g id="r-g">
+    <line x1="600" y1="630" x2="700" y2="630" stroke="#cbb478" stroke-width="10"/>
+    <rect x="630" y="626" width="3" height="8" fill="#a07020"/>
+    <rect x="640" y="626" width="3" height="8" fill="#000"/>
+    <rect x="650" y="626" width="3" height="8" fill="#a07020"/>
+    <text x="640" y="622" class="pin" text-anchor="middle">R_G 100k</text>
+    <circle cx="600" cy="630" r="3" fill="#c0a060" stroke="#000"/>
+    <circle cx="700" cy="630" r="3" fill="#c0a060" stroke="#000"/>
+  </g>
+
+  <!-- R1, R2 — 4.7k pull-ups (on gated 3V3 for SDA and SCL) -->
+  <g id="r-pullups">
+    <!-- R1 (SDA pull-up) -->
+    <line x1="820" y1="630" x2="820" y2="690" stroke="#cbb478" stroke-width="8"/>
+    <text x="828" y="664" class="pin">R1 4k7</text>
+    <text x="828" y="676" class="pin">SDA↑</text>
+    <circle cx="820" cy="630" r="3" fill="#c0a060" stroke="#000"/>
+    <circle cx="820" cy="698" r="3" fill="#c0a060" stroke="#000"/>
+
+    <!-- R2 (SCL pull-up) -->
+    <line x1="850" y1="630" x2="850" y2="690" stroke="#cbb478" stroke-width="8"/>
+    <text x="858" y="664" class="pin">R2 4k7</text>
+    <text x="858" y="676" class="pin">SCL↑</text>
+    <circle cx="850" cy="630" r="3" fill="#c0a060" stroke="#000"/>
+    <circle cx="850" cy="698" r="3" fill="#c0a060" stroke="#000"/>
+  </g>
+
+  <!-- R3, R4 — battery divider 100k+100k -->
+  <g id="r-divider">
+    <!-- R3 (BAT+ → mid) -->
+    <line x1="950" y1="630" x2="950" y2="460" stroke="#cbb478" stroke-width="8"/>
+    <text x="958" y="540" class="pin">R3 100k</text>
+    <text x="958" y="552" class="pin">divider top</text>
+    <circle cx="950" cy="460" r="3" fill="#c0a060" stroke="#000"/>
+    <circle cx="950" cy="630" r="3" fill="#c0a060" stroke="#000"/>
+
+    <!-- R4 (mid → GND) -->
+    <line x1="980" y1="630" x2="980" y2="690" stroke="#cbb478" stroke-width="8"/>
+    <text x="988" y="664" class="pin">R4 100k</text>
+    <text x="988" y="676" class="pin">divider btm</text>
+    <circle cx="980" cy="630" r="3" fill="#c0a060" stroke="#000"/>
+    <circle cx="980" cy="698" r="3" fill="#c0a060" stroke="#000"/>
+  </g>
+
+  <!-- ====================== AM2315C SENSOR (top-right, external) ====================== -->
+  <g id="am2315c">
+    <!-- sensor body (IP-rated white plastic) -->
+    <rect x="1080" y="80" width="200" height="100" rx="10" fill="#f4f4f4" stroke="#666" stroke-width="1.5"/>
+    <rect x="1095" y="95" width="170" height="70" rx="6" fill="#e8e8e8"/>
+    <text x="1180" y="125" class="lbl" font-weight="bold" text-anchor="middle">ASAIR AM2315C</text>
+    <text x="1180" y="142" class="lbl" text-anchor="middle">air T + RH, I²C @ 0x38</text>
+    <text x="1180" y="160" class="lbl" text-anchor="middle" fill="#a00">3V3 only · pull-ups required</text>
+    <!-- cable bundle going down -->
+    <path d="M 1180 180 Q 1180 200 1180 220" stroke="#444" stroke-width="8" fill="none"/>
+    <!-- 4 wire endings (color-coded leads, exit cable, each becomes a wire) -->
+    <circle cx="1170" cy="230" r="4" fill="#ff8000" stroke="#000"/>
+    <text x="1170" y="252" class="pin" text-anchor="middle">VCC</text>
+    <circle cx="1186" cy="230" r="4" fill="#000" stroke="#000"/>
+    <text x="1186" y="252" class="pin" text-anchor="middle" fill="#000">GND</text>
+    <circle cx="1202" cy="230" r="4" fill="#0080d0" stroke="#000"/>
+    <text x="1202" y="252" class="pin" text-anchor="middle">SDA</text>
+    <circle cx="1218" cy="230" r="4" fill="#b08000" stroke="#000"/>
+    <text x="1218" y="252" class="pin" text-anchor="middle">SCL</text>
+  </g>
+
+  <!-- ====================== CHIRP! SENSOR (right, external) ====================== -->
+  <g id="chirp">
+    <!-- sensor body (green PCB shaped like a leaf) -->
+    <rect x="1080" y="800" width="240" height="110" rx="20" fill="#1a6b2e" stroke="#0a3a1a" stroke-width="1.5"/>
+    <text x="1200" y="838" class="pcb-l">Chirp! soil moisture</text>
+    <text x="1200" y="854" class="pcb-l" font-weight="normal">capacitive · I²C @ 0x20</text>
+    <text x="1200" y="872" class="pcb-l" font-weight="normal" font-size="10">(R=VCC · B=GND · Bl=SDA · Y=SCL)</text>
+
+    <!-- cable bundle going up -->
+    <path d="M 1200 800 Q 1200 780 1200 760" stroke="#444" stroke-width="8" fill="none"/>
+    <circle cx="1170" cy="750" r="4" fill="#ff8000" stroke="#000"/>
+    <text x="1170" y="744" class="pin" text-anchor="middle">VCC</text>
+    <circle cx="1186" cy="750" r="4" fill="#000" stroke="#000"/>
+    <text x="1186" y="744" class="pin" text-anchor="middle" fill="#000">GND</text>
+    <circle cx="1202" cy="750" r="4" fill="#0080d0" stroke="#000"/>
+    <text x="1202" y="744" class="pin" text-anchor="middle">SDA</text>
+    <circle cx="1218" cy="750" r="4" fill="#b08000" stroke="#000"/>
+    <text x="1218" y="744" class="pin" text-anchor="middle">SCL</text>
+  </g>
+
+  <!-- ====================== WIRES ====================== -->
+  <g id="wires">
+    <!-- Holder BAT+ → Protection B+ -->
+    <path d="M 340 195 Q 200 220 80 248" class="w-bat"/>
+    <!-- Holder BAT− → Protection B− -->
+    <path d="M 60 195 Q 30 240 80 312" class="w-gnd"/>
+
+    <!-- Protection P+ → top RED rail (+BAT) -->
+    <path d="M 220 248 Q 260 290 280 408" class="w-bat"/>
+    <!-- Protection P− → top BLUE rail (GND) -->
+    <path d="M 220 312 Q 240 360 280 392" class="w-gnd"/>
+
+    <!-- Top red rail (+BAT) → SuperMini 5V pin -->
+    <path d="M 330 408 Q 330 430 330 450" class="w-bat"/>
+    <!-- Top blue rail (GND) → SuperMini GND pin -->
+    <path d="M 380 392 Q 380 430 330 468" class="w-gnd"/>
+
+    <!-- SuperMini 3V3 OUT pin → MOSFET S pin (across the free zone above the MOSFET) -->
+    <path d="M 330 486 C 460 425 580 425 675 490" class="w-3v3"/>
+
+    <!-- SuperMini GP4 (left side) → R_G left pad → MOSFET G -->
+    <path d="M 330 576 Q 330 605 500 605 Q 580 605 600 630" class="w-gpio"/>
+    <!-- R_G right pad → MOSFET G is on breadboard already through column connection — implicit -->
+
+    <!-- SuperMini GP6 SDA (right side) → SDA bus -->
+    <path d="M 590 540 Q 740 540 740 690 Q 740 698 820 698" class="w-sda"/>
+    <!-- SDA bus continues to AM2315C and Chirp -->
+    <path d="M 820 698 Q 900 698 1202 230" class="w-sda"/>
+    <path d="M 820 698 Q 1000 730 1202 750" class="w-sda"/>
+
+    <!-- SuperMini GP7 SCL (right side) → SCL bus -->
+    <path d="M 590 522 Q 760 522 760 698 Q 770 698 850 698" class="w-scl"/>
+    <path d="M 850 698 Q 940 700 1218 230" class="w-scl"/>
+    <path d="M 850 698 Q 1000 740 1218 750" class="w-scl"/>
+
+    <!-- MOSFET D → bottom RED rail (gated 3V3) -->
+    <path d="M 725 490 Q 725 650 760 698" class="w-3v3g"/>
+
+    <!-- AM2315C VCC ← bottom red rail -->
+    <path d="M 1170 230 Q 1100 500 1080 698" class="w-3v3g"/>
+    <!-- AM2315C GND ← bottom blue rail (GND) -->
+    <path d="M 1186 230 Q 1130 480 1100 682" class="w-gnd"/>
+
+    <!-- Chirp VCC ← bottom red rail -->
+    <path d="M 1170 750 Q 1100 720 1080 698" class="w-3v3g"/>
+    <!-- Chirp GND ← bottom blue rail -->
+    <path d="M 1186 750 Q 1140 720 1100 682" class="w-gnd"/>
+
+    <!-- R1, R2 — bottom pads connect to SDA/SCL buses (already drawn above through cols 30/31) -->
+    <!-- R1 top pad to gated 3V3 rail -->
+    <path d="M 820 630 Q 820 615 950 460" class="w-3v3g" opacity="0.6"/>
+    <!-- Implicit: R1 sits on breadboard between col 30 (gated 3V3 via top half) and the SDA bus column.
+         Visually we already drew the bus via columns at y=698. -->
+
+    <!-- Battery divider:
+         R3 top pad (y=460) → top red rail (+BAT) via short hop
+         R3 bottom = R4 top at y=630 → ADC node → GP0 -->
+    <path d="M 950 460 Q 950 430 950 408" class="w-bat"/>
+    <!-- ADC node → GP0 wire (long path under SuperMini back to GP0 pin on left) -->
+    <path d="M 950 630 Q 950 720 900 720 Q 500 720 330 720 Q 330 600 330 504" class="w-gpio"/>
+    <!-- R4 bottom → bottom blue rail -->
+    <path d="M 980 698 Q 980 695 980 690" class="w-gnd"/>
+
+    <!-- Bottom rail jumpers: bottom blue (GND) needs jumper to top blue, bottom red is GATED -->
+    <!-- jumper bottom blue → top blue (GND common) -->
+    <path d="M 1240 682 Q 1280 682 1280 392 Q 1280 360 1240 392" class="w-gnd"/>
+  </g>
+
+  <!-- ====================== LEGEND ====================== -->
+  <g id="legend" transform="translate(60, 800)">
+    <rect x="0" y="0" width="380" height="160" fill="#fafafa" stroke="#aaa" stroke-width="1"/>
+    <text x="190" y="22" text-anchor="middle" class="lbl" font-weight="bold">Wire colours</text>
+    <line x1="20" y1="42" x2="60" y2="42" class="w-bat"/>
+    <text x="68" y="46" class="lbl">+BAT (3.2–4.2 V from cell via protection)</text>
+    <line x1="20" y1="62" x2="60" y2="62" class="w-gnd"/>
+    <text x="68" y="66" class="lbl">GND</text>
+    <line x1="20" y1="82" x2="60" y2="82" class="w-3v3"/>
+    <text x="68" y="86" class="lbl">3V3 OUT (always on, powers MCU)</text>
+    <line x1="20" y1="102" x2="60" y2="102" class="w-3v3g"/>
+    <text x="68" y="106" class="lbl">3V3 gated (only when GP4=LOW; sensors)</text>
+    <line x1="20" y1="122" x2="60" y2="122" class="w-sda"/>
+    <text x="68" y="126" class="lbl">I²C SDA</text>
+    <line x1="20" y1="142" x2="60" y2="142" class="w-scl"/>
+    <text x="68" y="146" class="lbl">I²C SCL · <tspan fill="#009040">green</tspan> = GPIO logic</text>
+  </g>
+
+  <!-- ====================== POWER-RAIL ROLES ====================== -->
+  <g transform="translate(470, 800)">
+    <rect x="0" y="0" width="430" height="160" fill="#fafafa" stroke="#aaa" stroke-width="1"/>
+    <text x="215" y="22" text-anchor="middle" class="lbl" font-weight="bold">Breadboard power rails — assignment</text>
+    <text x="20" y="46" class="lbl"><tspan fill="#c03030">▬</tspan> top red rail   = +BAT (from protection P+)</text>
+    <text x="20" y="66" class="lbl"><tspan fill="#3060c0">▬</tspan> top blue rail  = GND</text>
+    <text x="20" y="86" class="lbl"><tspan fill="#c000a0">▬</tspan> bottom red rail = gated 3V3 (MOSFET D)</text>
+    <text x="20" y="106" class="lbl"><tspan fill="#3060c0">▬</tspan> bottom blue rail = GND (jumper to top blue → right edge)</text>
+    <text x="20" y="130" class="net">3V3 OUT runs as a SEPARATE wire from SuperMini to MOSFET S pin —</text>
+    <text x="20" y="146" class="net">no rail assigned to always-on 3V3 to avoid confusion with gated.</text>
+  </g>
+
+  <!-- ====================== ASSEMBLY ORDER ====================== -->
+  <g transform="translate(930, 800)">
+    <rect x="0" y="0" width="470" height="160" fill="#fafafa" stroke="#aaa" stroke-width="1"/>
+    <text x="235" y="22" text-anchor="middle" class="lbl" font-weight="bold">Assembly order (recommended)</text>
+    <text x="20" y="44" class="lbl">1. SuperMini on breadboard, USB-C clear on the side.</text>
+    <text x="20" y="62" class="lbl">2. AO3401 breakout + resistors R_PU/R_G/R1/R2/R3/R4 on board.</text>
+    <text x="20" y="80" class="lbl">3. Yellow DuPont wires — from SuperMini pins to the correct columns.</text>
+    <text x="20" y="98" class="lbl">4. Sensor cables (AM2315C, Chirp) to the right edge of the bb.</text>
+    <text x="20" y="116" class="lbl">5. Battery holder + protection separately — soldering / heat-shrink.</text>
+    <text x="20" y="134" class="lbl">6. Connect protection P+/P− to top rails — <tspan font-weight="bold">last of all</tspan>.</text>
+    <text x="20" y="152" class="lbl" fill="#a00">⚠ Before powering: check +BAT vs GND for short circuit!</text>
+  </g>
+</svg>

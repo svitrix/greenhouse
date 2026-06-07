@@ -1,0 +1,20 @@
+{
+  "name": "gh-infra-sensor-node",
+  "version": "0.1.0",
+  "description": "Sensor-node infrastructure: I2C drivers (AM2315C, Chirp), platform (BatteryMonitor, DeepSleepClock, SensorPowerGate, ArduinoClock), network (ZigbeeEndDeviceAdapter).",
+  "platforms": ["espressif32"],
+  "frameworks": ["arduino"],
+  "dependencies": {
+    "gh-domain": "*",
+    "gh-app-shared": "*",
+    "gh-protocol": "*"
+  },
+  "build": {
+    "srcDir": "src",
+    "includeDir": "src",
+    "flags": "-Wextra -Wconversion -Wshadow -fno-rtti"
+  },
+  "export": {
+    "include": "src/**"
+  }
+}

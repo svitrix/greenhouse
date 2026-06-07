@@ -1,0 +1,178 @@
+/* ============================================================
+   Greenhouse Coordinator — design tokens
+   Colors copied VERBATIM (as hsl) from the cloud dashboard's
+   shadcn theme: services/dashboard/src/index.css.  Same hues,
+   same light + dark sets — the two front-ends are one product.
+   Coordinator keeps its own token *names* (--c-* / --s-*) so the
+   existing CSS modules re-skin without markup changes; each name
+   below is annotated with the dashboard token it mirrors.
+   ============================================================ */
+
+:root {
+  /* ---- palette (light) — mirrors index.css :root ------ */
+  --c-bg:        hsl(160 36% 95%);   /* --background */
+  --c-bg-soft:   hsl(162 29% 91%);   /* --muted */
+  --c-surface:   hsl(0 0% 100%);     /* --card */
+  --c-surface-2: hsl(162 35% 93%);   /* --accent (recessed/hover wash) */
+  --c-line:      hsl(162 26% 85%);   /* --border */
+  --c-line-soft: hsl(162 28% 90%);
+
+  --c-ink:       hsl(188 66% 11%);   /* --foreground */
+  --c-ink-2:     hsl(170 11% 41%);   /* --muted-foreground */
+  --c-ink-3:     hsl(170 12% 56%);
+
+  --c-leaf:      hsl(189 69% 15%);   /* --primary */
+  --c-leaf-dark: hsl(189 70% 10%);
+  --c-leaf-hover:hsl(189 69% 21%);   /* --primary-hover */
+  --c-leaf-bg:   hsl(158 44% 89%);   /* --ok-bg (selected wash) */
+  --c-sage:      hsl(169 63% 33%);   /* --ring */
+  --c-moss:      hsl(169 54% 40%);   /* --k-soil (tile icon) */
+  --c-earth:     hsl(169 63% 33%);   /* --ok (watering / pump ring) */
+  --c-earth-soft:hsl(169 54% 50%);
+  --c-lime:      hsl(68 82% 59%);    /* --lime — active/live only */
+  --c-lime-deep: hsl(68 73% 47%);    /* --lime-deep */
+  --c-on-lime:   hsl(83 79% 9%);     /* --lime-foreground */
+  --c-amber:     hsl(39 71% 42%);    /* --warning */
+  --c-brick:     hsl(5 65% 50%);     /* --destructive */
+  --c-brick-dark:hsl(5 65% 42%);
+  --c-alert:     hsl(5 65% 50%);
+  --c-sky:       hsl(194 55% 41%);   /* --k-hum / --info */
+  --c-sun:       hsl(39 71% 42%);
+
+  /* danger-zone surface (destructive settings panel) */
+  --c-danger-zone-bg:     hsl(10 75% 94%);  /* --destructive-bg */
+  --c-danger-zone-border: hsl(10 59% 85%);  /* --destructive-border */
+
+  /* state colors (paired w/ text) — mapped to dashboard
+     semantic + sensor-kind families */
+  --s-dry-bg:        hsl(43 71% 89%);   /* warning */
+  --s-dry-fg:        hsl(38 77% 27%);
+  --s-cool-bg:       hsl(192 47% 90%);  /* info */
+  --s-cool-fg:       hsl(194 57% 25%);
+  --s-optimal-bg:    hsl(158 44% 89%);  /* ok */
+  --s-optimal-fg:    hsl(167 64% 23%);
+  --s-warm-bg:       hsl(35 60% 89%);   /* k-temp */
+  --s-warm-fg:       hsl(28 61% 30%);
+  --s-humid-bg:      hsl(192 47% 90%);  /* k-hum */
+  --s-humid-fg:      hsl(194 57% 25%);
+  --s-saturated-bg:  hsl(192 47% 90%);  /* info (deep) */
+  --s-saturated-fg:  hsl(194 60% 22%);
+  --s-hot-bg:        hsl(10 79% 92%);   /* danger */
+  --s-hot-fg:        hsl(4 70% 34%);
+  --s-cold-bg:       hsl(192 47% 90%);  /* info */
+  --s-cold-fg:       hsl(194 57% 25%);
+  --s-alert-bg:      hsl(10 79% 92%);   /* danger */
+  --s-alert-fg:      hsl(4 70% 34%);
+  --s-offline-bg:    hsl(162 29% 91%);  /* muted */
+  --s-offline-fg:    hsl(170 11% 41%);
+  /* aliases used by WifiPicker / Provisioning */
+  --s-moist-bg:      hsl(158 44% 89%);
+  --s-moist-fg:      hsl(167 64% 23%);
+  --s-warn-bg:       hsl(43 71% 89%);
+  --s-warn-fg:       hsl(38 77% 27%);
+
+  /* ---- type ------------------------------------------- */
+  /* Metropolis is the dashboard's brand face; the coordinator is
+     served from flash with no bundled web font, so it falls
+     straight through to the native iOS/system stack (SF Pro on
+     Apple).  --ff-display keeps SF Pro Rounded for the numerics. */
+  --ff-sans:    "Metropolis", -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --ff-display: ui-rounded, "SF Pro Rounded", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro", system-ui, "Segoe UI Variable Display", Roboto, sans-serif;
+  --ff-mono:    ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  /* legacy alias — older rules still reference --ff-serif */
+  --ff-serif:   var(--ff-display);
+
+  --fs-display: 44px;
+  --fs-h1: 22px;
+  --fs-h2: 16px;
+  --fs-body: 15px;
+  --fs-small: 13px;
+  --fs-tiny: 11px;
+
+  /* ---- shape — dashboard's shadcn scale (--radius 0.75rem) */
+  --r-sm: 10px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-pill: 999px;
+
+  /* flat, shadcn-style elevation: cards get a hairline shadow,
+     buttons carry none. */
+  --sh-card: 0 1px 3px 0 rgba(8,40,46,.08), 0 1px 2px -1px rgba(8,40,46,.06);
+  --sh-pop:  0 24px 60px -24px rgba(6,24,28,.40);
+
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+}
+
+/* ============================================================
+   Dark — mirrors index.css .dark.  Auto-follows the OS; token
+   names are identical to the light set, so every component
+   re-skins without touching markup.
+   ============================================================ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-bg:        hsl(192 68% 7%);    /* --background */
+    --c-bg-soft:   hsl(190 59% 15%);   /* --muted */
+    --c-surface:   hsl(190 63% 12%);   /* --card */
+    --c-surface-2: hsl(190 61% 16%);   /* --accent */
+    --c-line:      hsl(190 49% 20%);   /* --border */
+    --c-line-soft: hsl(190 49% 24%);
+
+    --c-ink:       hsl(166 37% 88%);   /* --foreground */
+    --c-ink-2:     hsl(168 15% 60%);   /* --muted-foreground */
+    --c-ink-3:     hsl(168 13% 50%);
+
+    --c-leaf:      hsl(166 57% 43%);   /* --primary */
+    --c-leaf-dark: hsl(166 57% 35%);
+    --c-leaf-hover:hsl(166 53% 50%);   /* --primary-hover */
+    --c-leaf-bg:   hsl(173 57% 15%);   /* --ok-bg */
+    --c-sage:      hsl(166 53% 50%);   /* --ring */
+    --c-moss:      hsl(167 54% 51%);   /* --k-soil */
+    --c-earth:     hsl(164 58% 48%);   /* --ok */
+    --c-earth-soft:hsl(164 58% 58%);
+    --c-lime:      hsl(67 90% 64%);    /* --lime */
+    --c-lime-deep: hsl(67 67% 51%);    /* --lime-deep */
+    --c-on-lime:   hsl(94 53% 8%);     /* --lime-foreground */
+    --c-amber:     hsl(40 73% 56%);    /* --warning */
+    --c-brick:     hsl(7 83% 65%);     /* --destructive */
+    --c-brick-dark:hsl(7 70% 55%);
+    --c-alert:     hsl(7 83% 65%);
+    --c-sky:       hsl(193 57% 56%);   /* --info / --k-hum */
+    --c-sun:       hsl(40 73% 56%);
+
+    --c-danger-zone-bg:     hsl(6 53% 15%);   /* --destructive-bg */
+    --c-danger-zone-border: hsl(8 53% 23%);   /* --destructive-border */
+
+    --s-dry-bg:        hsl(42 53% 15%);
+    --s-dry-fg:        hsl(40 80% 71%);
+    --s-cool-bg:       hsl(192 55% 15%);
+    --s-cool-fg:       hsl(191 59% 73%);
+    --s-optimal-bg:    hsl(173 57% 15%);
+    --s-optimal-fg:    hsl(163 65% 66%);
+    --s-warm-bg:       hsl(30 37% 16%);
+    --s-warm-fg:       hsl(34 69% 61%);
+    --s-humid-bg:      hsl(192 55% 15%);
+    --s-humid-fg:      hsl(191 59% 73%);
+    --s-saturated-bg:  hsl(192 55% 15%);
+    --s-saturated-fg:  hsl(191 59% 73%);
+    --s-hot-bg:        hsl(6 53% 15%);
+    --s-hot-fg:        hsl(9 80% 78%);
+    --s-cold-bg:       hsl(192 55% 15%);
+    --s-cold-fg:       hsl(191 59% 73%);
+    --s-alert-bg:      hsl(6 53% 15%);
+    --s-alert-fg:      hsl(9 80% 78%);
+    --s-offline-bg:    hsl(190 59% 15%);
+    --s-offline-fg:    hsl(168 15% 60%);
+    --s-moist-bg:      hsl(173 57% 15%);
+    --s-moist-fg:      hsl(163 65% 66%);
+    --s-warn-bg:       hsl(42 53% 15%);
+    --s-warn-fg:       hsl(40 80% 71%);
+
+    --sh-card: 0 1px 2px rgba(0,0,0,.4), 0 6px 18px -10px rgba(0,0,0,.6);
+    --sh-pop:  0 28px 64px -24px rgba(0,0,0,.75);
+  }
+}

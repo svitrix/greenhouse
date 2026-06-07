@@ -1,0 +1,30 @@
+#pragma once
+#include <cstdint>
+
+// Copy this file to test_creds.hpp and fill in real values.
+// test_creds.hpp is gitignored.
+//
+// Required setup before running:
+//   1. Run mosquitto locally on your dev machine:
+//        mosquitto -p 1883  (or -c /usr/local/etc/mosquitto/mosquitto.conf)
+//   2. Make sure your dev machine and the ESP32-C6 board are on the same
+//      Wi-Fi network (or board joins a guest SSID that can reach the dev
+//      machine's IP).
+//   3. Set kTestMqttHost below to your dev machine's IP on that network
+//      (e.g. ifconfig | grep inet on macOS / ip addr on Linux).
+//   4. Set Wi-Fi SSID + password to your network.
+
+namespace gh::hwtest {
+
+constexpr const char* kTestWifiSsid     = "YOUR_WIFI_SSID";
+constexpr const char* kTestWifiPassword = "YOUR_WIFI_PASSWORD";
+
+constexpr const char* kTestMqttHost     = "192.168.X.Y";  // dev-machine IP
+constexpr uint16_t    kTestMqttPort     = 1883U;
+constexpr const char* kTestMqttClientId = "gh-hwtest";
+
+// Anonymous broker — leave these empty unless mosquitto.conf demands auth.
+constexpr const char* kTestMqttUser     = "";
+constexpr const char* kTestMqttPassword = "";
+
+}  // namespace gh::hwtest

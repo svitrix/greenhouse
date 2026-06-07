@@ -1,0 +1,6 @@
+.card    { padding: 12px; border-radius: 10px; margin: 8px 0;
+           background: var(--bg-card, #fff);
+           border: 1px solid var(--border, #ddd); }
+.online  {}
+.offline { opacity: 0.65; }
+.badges  { display: flex; flex-wrap: wrap; }

@@ -1,0 +1,20 @@
+.panel    { padding: 12px; border-radius: 10px; margin: 8px 0;
+            background: var(--bg-card, #fff);
+            border: 1px solid var(--border, #ddd); }
+.row      { display: flex; align-items: center; justify-content: space-between; }
+.label    { font-weight: 600; }
+.pill     { font-size: 0.8em; padding: 2px 10px; border-radius: 999px; }
+.on       { background: color-mix(in srgb, var(--accent-fresh, #2ecc71) 20%, transparent);
+            color: var(--accent-fresh, #2ecc71); }
+.off      { background: color-mix(in srgb, var(--text-muted, #888) 20%, transparent);
+            color: var(--text-muted, #888); }
+.locked   { background: color-mix(in srgb, var(--accent-recent, #e67e22) 20%, transparent);
+            color: var(--accent-recent, #e67e22); }
+.lockout  { font-size: 0.85em; color: var(--accent-recent, #e67e22);
+            padding: 4px 0; }
+.buttons  { display: flex; gap: 8px; margin-top: 8px; }
+.buttons button { padding: 6px 12px; border-radius: 6px;
+                   border: 1px solid var(--border, #ddd);
+                   background: var(--bg-elev, #f5f5f5);
+                   cursor: pointer; }
+.buttons button:disabled { opacity: 0.4; cursor: not-allowed; }

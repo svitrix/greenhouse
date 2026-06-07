@@ -1,0 +1,45 @@
+.tile {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+  padding: var(--sp-4);
+  box-shadow: var(--sh-card);
+  display: flex; flex-direction: column;
+  gap: var(--sp-3);
+  position: relative;
+  overflow: hidden;
+  min-height: 168px;
+}
+.head {
+  display: flex; align-items: center; gap: var(--sp-2);
+  color: var(--c-ink-2);
+}
+.icon {
+  width: 26px; height: 26px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+  background: var(--c-surface-2);
+  color: var(--c-moss);
+}
+.label {
+  font-size: var(--fs-small);
+  letter-spacing: .02em;
+  color: var(--c-ink-2);
+  flex: 1; min-width: 0;
+}
+.foot {
+  margin-top: auto;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--sp-2);
+}
+.sk {
+  background: linear-gradient(90deg, var(--c-surface-2) 0%, var(--c-bg-soft) 50%, var(--c-surface-2) 100%);
+  background-size: 200% 100%;
+  animation: sk 1.4s ease-in-out infinite;
+  border-radius: 6px;
+}
+@keyframes sk { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+.num   { height: 38px; width: 50%; }
+.line  { height: 28px; width: 100%; }
+.badge { height: 18px; width: 70px; border-radius: 999px; }
+@media (prefers-reduced-motion: reduce) { .sk { animation: none; } }

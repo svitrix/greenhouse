@@ -1,0 +1,12 @@
+{
+  "name": "gh-app-sensor-node",
+  "version": "0.1.0",
+  "description": "Sensor-node application services: SensorCycle, SensorNodeConfig.",
+  "dependencies": {
+    "gh-domain": "*",
+    "gh-app-shared": "*",
+    "gh-protocol": "*"
+  },
+  "build": { "srcDir": "src", "includeDir": "src", "flags": "-Wextra -Wconversion -Wshadow -fno-rtti" },
+  "export": { "include": "src/**" }
+}

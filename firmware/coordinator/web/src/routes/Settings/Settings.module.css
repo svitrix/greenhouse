@@ -1,0 +1,11 @@
+.settings   { padding: 12px; max-width: 720px; margin: 0 auto; }
+.back       { color: var(--text-muted, #888); text-decoration: none;
+              padding: 4px 0; display: inline-block; }
+.settings label { display: flex; align-items: center; gap: 8px;
+                   padding: 4px 0; }
+.settings input[type="number"] { padding: 4px; width: 80px; }
+.settings button { padding: 8px 16px; border-radius: 6px; margin: 12px 0;
+                    background: var(--accent-fresh, #2ecc71); color: white;
+                    border: none; cursor: pointer; }
+.status     { padding: 8px; color: var(--text-muted, #888); }
+.loading    { padding: 20px; text-align: center; color: var(--text-muted, #888); }

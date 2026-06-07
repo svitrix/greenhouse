@@ -1,0 +1,11 @@
+.header { display: flex; align-items: center; gap: 8px; padding-bottom: 6px; }
+.alias  { font-weight: 700; font-size: 1.1em; }
+.input  { font: inherit; padding: 2px 6px; border-radius: 4px;
+          border: 1px solid var(--border, #ddd); }
+.editBtn{ background: none; border: none; cursor: pointer; padding: 2px; }
+.pill   { font-size: 0.75em; padding: 2px 8px; border-radius: 999px; }
+.online { background: color-mix(in srgb, var(--accent-fresh, #2ecc71) 20%, transparent);
+          color: var(--accent-fresh, #2ecc71); }
+.offline{ background: color-mix(in srgb, var(--text-muted, #95a5a6) 20%, transparent);
+          color: var(--text-muted, #95a5a6); }
+.meta   { margin-left: auto; font-size: 0.85em; color: var(--text-muted, #888); }

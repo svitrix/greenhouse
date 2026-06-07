@@ -1,0 +1,26 @@
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-body);
+  color: var(--c-ink);
+  background: var(--c-bg);
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  line-height: 1.4;
+  letter-spacing: -.005em;
+  font-feature-settings: "tnum";
+  /* dashboard Login backdrop recipe — lime + primary washes over
+     the flat canvas (services/dashboard/src/pages/Login.tsx) */
+  background-image:
+    radial-gradient(120% 90% at 15% 10%, color-mix(in srgb, var(--c-lime) 14%, transparent), transparent 55%),
+    radial-gradient(100% 80% at 90% 90%, color-mix(in srgb, var(--c-leaf) 12%, transparent), transparent 60%);
+  background-attachment: fixed;
+}
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
+input, textarea, select { font: inherit; color: inherit; }
+a { color: var(--c-leaf-dark); }
+svg { display: block; }
+.num  { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.mono { font-family: var(--ff-mono); }

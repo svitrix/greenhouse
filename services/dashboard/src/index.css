@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Greenhouse Hub — design system tokens (shadcn HSL format)
+   Ported from the design prototype (hub/tokens.css): deep
+   petrol-teal · electric lime · pale mint. Lime = live/active.
+   ============================================================ */
+@layer base {
+  :root {
+    --background: 160 36% 95%;
+    --foreground: 188 66% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 188 66% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 188 66% 11%;
+    --muted: 162 29% 91%;
+    --muted-foreground: 170 11% 41%;
+    --primary: 189 69% 15%;
+    --primary-foreground: 165 50% 97%;
+    --primary-hover: 189 69% 21%;
+    --secondary: 160 27% 89%;
+    --secondary-foreground: 189 63% 18%;
+    --accent: 162 35% 93%;
+    --accent-foreground: 188 66% 11%;
+    --destructive: 5 65% 50%;
+    --destructive-foreground: 10 100% 98%;
+    --destructive-bg: 10 75% 94%;
+    --destructive-border: 10 59% 85%;
+    --border: 162 26% 85%;
+    --border-strong: 165 24% 77%;
+    --input: 162 26% 85%;
+    --ring: 169 63% 33%;
+
+    --lime: 68 82% 59%;
+    --lime-deep: 68 73% 47%;
+    --lime-foreground: 83 79% 9%;
+
+    --ok: 169 63% 33%;
+    --ok-bg: 158 44% 89%;
+    --ok-fg: 167 64% 23%;
+    --warning: 39 71% 42%;
+    --warning-bg: 43 71% 89%;
+    --warning-fg: 38 77% 27%;
+    --danger: 5 65% 50%;
+    --danger-bg: 10 79% 92%;
+    --danger-fg: 4 70% 34%;
+    --info: 194 55% 41%;
+    --info-bg: 192 47% 90%;
+    --info-fg: 194 57% 25%;
+
+    --k-soil: 169 54% 40%;
+    --k-soil-bg: 166 44% 89%;
+    --k-temp: 28 61% 47%;
+    --k-temp-bg: 35 60% 89%;
+    --k-hum: 194 55% 41%;
+    --k-hum-bg: 192 47% 90%;
+    --k-vbat: 72 41% 38%;
+    --k-vbat-bg: 72 50% 88%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 192 68% 7%;
+    --foreground: 166 37% 88%;
+    --card: 190 63% 12%;
+    --card-foreground: 166 37% 88%;
+    --popover: 190 61% 13%;
+    --popover-foreground: 166 37% 88%;
+    --muted: 190 59% 15%;
+    --muted-foreground: 168 15% 60%;
+    --primary: 166 57% 43%;
+    --primary-foreground: 188 79% 6%;
+    --primary-hover: 166 53% 50%;
+    --secondary: 191 56% 16%;
+    --secondary-foreground: 167 35% 81%;
+    --accent: 190 61% 16%;
+    --accent-foreground: 166 37% 88%;
+    --destructive: 7 83% 65%;
+    --destructive-foreground: 5 73% 6%;
+    --destructive-bg: 6 53% 15%;
+    --destructive-border: 8 53% 23%;
+    --border: 190 49% 20%;
+    --border-strong: 189 45% 27%;
+    --input: 190 49% 20%;
+    --ring: 166 53% 50%;
+
+    --lime: 67 90% 64%;
+    --lime-deep: 67 67% 51%;
+    --lime-foreground: 94 53% 8%;
+
+    --ok: 164 58% 48%;
+    --ok-bg: 173 57% 15%;
+    --ok-fg: 163 65% 66%;
+    --warning: 40 73% 56%;
+    --warning-bg: 42 53% 15%;
+    --warning-fg: 40 80% 71%;
+    --danger: 7 83% 65%;
+    --danger-bg: 6 53% 15%;
+    --danger-fg: 9 80% 78%;
+    --info: 193 57% 56%;
+    --info-bg: 192 55% 15%;
+    --info-fg: 191 59% 73%;
+
+    --k-soil: 167 54% 51%;
+    --k-soil-bg: 173 57% 15%;
+    --k-temp: 34 69% 61%;
+    --k-temp-bg: 30 37% 16%;
+    --k-hum: 193 57% 56%;
+    --k-hum-bg: 192 55% 15%;
+    --k-vbat: 69 51% 57%;
+    --k-vbat-bg: 72 39% 15%;
+  }
+
+  * { @apply border-border; }
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Metropolis", -apple-system, BlinkMacSystemFont, "Segoe UI",
+      Roboto, "Helvetica Neue", sans-serif;
+  }
+}

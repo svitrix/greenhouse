@@ -1,0 +1,11 @@
+.dashboard { padding: 12px; max-width: 720px; margin: 0 auto; }
+.header    { display: flex; align-items: center; justify-content: space-between;
+             padding: 8px 0; font-weight: 600; }
+.addBtn    { padding: 6px 12px; border-radius: 6px; text-decoration: none;
+             background: var(--accent-fresh, #2ecc71); color: white; }
+.empty     { padding: 20px; text-align: center; color: var(--text-muted, #888);
+             border: 1px dashed var(--border, #ddd); border-radius: 10px;
+             margin: 8px 0; }
+.loading   { padding: 20px; text-align: center; color: var(--text-muted, #888); }
+.error     { padding: 12px; color: #e74c3c; background: #fdecea;
+             border-radius: 8px; margin: 12px 0; }

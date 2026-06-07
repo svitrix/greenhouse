@@ -1,0 +1,17 @@
+{
+  "name": "gh-app-coordinator",
+  "version": "0.1.0",
+  "description": "Coordinator-specific application services: IrrigationService, TelemetryPublisher, WifiProvisioner. ESP-only (uses Arduino/Wire types indirectly).",
+  "dependencies": {
+    "gh-domain": "*",
+    "gh-app-shared": "*",
+    "Embedded Template Library ETL": "*"
+  },
+  "build": {
+    "srcDir": "src",
+    "includeDir": "src"
+  },
+  "export": {
+    "include": "src/**"
+  }
+}

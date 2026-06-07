@@ -1,0 +1,6 @@
+.panel    { padding: 12px; border-radius: 10px; margin: 8px 0;
+            background: var(--bg-card, #fff);
+            border: 1px solid var(--border, #ddd); }
+.title    { font-weight: 700; margin-bottom: 4px; }
+.decision { font-size: 0.85em; color: var(--text-muted, #888);
+            margin-top: 4px; }

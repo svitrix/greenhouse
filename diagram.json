@@ -1,0 +1,190 @@
+{
+  "version": 1,
+  "author": "Greenhouse ESP32 — auto-watering test board (full power chain)",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-text",
+      "id": "title",
+      "top": -680,
+      "left": -250,
+      "attrs": {
+        "text": "Greenhouse ESP32-C6 — Auto-Watering Test Board (visualization)",
+        "fontSize": "22"
+      }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "subtitle",
+      "top": -645,
+      "left": -250,
+      "attrs": {
+        "text": "Power chain: USB-C PD (45W) -> PD-Trigger (12V locked) -> [pump  &  buck 12V->5V -> ESP32 VIN & relay coils]",
+        "fontSize": "13",
+        "color": "green"
+      }
+    },
+
+    { "type": "wokwi-vcc",       "id": "v_12v",     "top": -580, "left": -480, "attrs": { "label": "12V from USB-PD trigger" } },
+    { "type": "wokwi-resistor",  "id": "pd_trig",   "top": -560, "left": -370, "attrs": { "value": "0.1", "label": "PD-Trigger" } },
+    { "type": "wokwi-resistor",  "id": "buck",      "top": -560, "left": -240, "attrs": { "value": "0.1", "label": "Buck 12V->5V" } },
+    { "type": "wokwi-vcc",       "id": "v_5v",      "top": -580, "left": -100, "attrs": { "label": "5V (to breadboard top+ rail)" } },
+    { "type": "wokwi-vcc",       "id": "v_12v_pump","top": -580, "left":  120, "attrs": { "label": "12V (to relay COM1)" } },
+    { "type": "wokwi-gnd",       "id": "gnd_main",  "top": -540, "left":  340, "attrs": { "label": "GND (common)" } },
+
+    { "type": "wokwi-text", "id": "n_powerchain", "top": -510, "left": -480, "attrs": {
+        "text": "[USB-PD trigger]   ->  splits 12V two ways: one to pump path (via relay), one to buck input.\nBuck output 5V -> ESP32 5V/VIN pin & relay DC+ coil.  ESP32 internal LDO produces 3.3V on 3V3 pin -> sensors.",
+        "fontSize": "11", "color": "gray" } },
+
+    {
+      "type": "board-esp32-c6-devkitm-1",
+      "id": "esp",
+      "top": -70,
+      "left": -80,
+      "attrs": {}
+    },
+
+    {
+      "type": "wokwi-breadboard-half",
+      "id": "bb1",
+      "top": 130,
+      "left": -150,
+      "attrs": {}
+    },
+
+    {
+      "type": "wokwi-dht22",
+      "id": "am2315c",
+      "top": -300,
+      "left": 280,
+      "attrs": { "temperature": "24", "humidity": "55" }
+    },
+    { "type": "wokwi-text", "id": "n_am2315", "top": -340, "left": 280, "attrs": {
+        "text": "#4 AM2315C  I2C 0x38\n(Wokwi sim: DHT22)\nVCC=3.3V, SDA->GPIO6, SCL->GPIO7",
+        "color": "blue", "fontSize": "11" } },
+
+    {
+      "type": "wokwi-potentiometer",
+      "id": "chirp",
+      "top": -180,
+      "left": -440,
+      "attrs": { "value": "300" }
+    },
+    { "type": "wokwi-text", "id": "n_chirp", "top": -120, "left": -440, "attrs": {
+        "text": "#9 Chirp! soil I2C 0x20\n(Wokwi sim: potentiometer)\nVCC=3.3V, SDA=GPIO6, SCL=GPIO7\nNO internal pull-up!",
+        "color": "blue", "fontSize": "11" } },
+
+    {
+      "type": "wokwi-relay-module",
+      "id": "relay",
+      "top": -440,
+      "left": -100,
+      "attrs": {}
+    },
+    { "type": "wokwi-text", "id": "n_relay", "top": -470, "left": -100, "attrs": {
+        "text": "#11 Relay 2-channel 5V (jumper -> HIGH-active)\nIN1<-GPIO18 (pump), IN2<-GPIO19 (spare)\nDC+ = 5V rail, DC- = GND\nNote: GPIO10/11 NOT broken out on DevKitM-1",
+        "color": "purple", "fontSize": "11" } },
+
+    {
+      "type": "wokwi-led",
+      "id": "pump_led",
+      "top": -520,
+      "left": 340,
+      "attrs": { "color": "blue", "label": "PUMP 12V" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_led",
+      "top": -490,
+      "left": 200,
+      "attrs": { "value": "1000" }
+    },
+    { "type": "wokwi-text", "id": "n_pump", "top": -555, "left": 200, "attrs": {
+        "text": "#5 Brushless pump 12V (Wokwi sim: LED+1kOhm)\nReal wiring: 12V -> relay COM1, relay NO1 -> pump(+), pump(-) -> GND",
+        "color": "blue", "fontSize": "11" } },
+
+    {
+      "type": "wokwi-pushbutton",
+      "id": "float_sw",
+      "top": 340,
+      "left": -380,
+      "attrs": { "color": "blue", "label": "FLOAT" }
+    },
+    { "type": "wokwi-text", "id": "n_float", "top": 290, "left": -380, "attrs": {
+        "text": "Float switch (recommended addition, not in BOM yet)\nGPIO14 INPUT_PULLUP, active-low: closed = water present",
+        "color": "blue", "fontSize": "11" } },
+
+    {
+      "type": "wokwi-resistor",
+      "id": "r_sda",
+      "top":  20,
+      "left": 200,
+      "attrs": { "value": "4700" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_scl",
+      "top":  60,
+      "left": 200,
+      "attrs": { "value": "4700" }
+    },
+    { "type": "wokwi-text", "id": "n_pullup", "top": -10, "left": 200, "attrs": {
+        "text": "#10 Resistors: 2x 4.7kOhm I2C pull-ups -> 3V3\nplus 1kOhm in series with pump indicator LED",
+        "color": "red", "fontSize": "11" } },
+
+    { "type": "wokwi-text", "id": "n_bom_bb", "top": 250, "left": -150, "attrs": {
+        "text": "#1 Breadboard 400 pts (transparent)\nESP32-C6 straddles the central gap.\nRails: top+ = 5V, top- = GND, bottom+ = 3V3, bottom- = GND",
+        "color": "black", "fontSize": "11" } },
+
+    { "type": "wokwi-text", "id": "n_wires", "top": 420, "left": -150, "attrs": {
+        "text": "Wires from BOM (just connections in Wokwi — colored to match):\n#2  M-M 20cm   - inside breadboard (rails, ESP <-> rails, pull-ups)\n#13 M-M 30cm   - long internal jumps across the board\n#12 M-F 30cm   - to nearby relay module & AM2315C\n#7  M-F 100cm  - to remote sensors / float switch\n#14 F-F 20cm   - relay <-> screw terminals to 12V/GND posts",
+        "color": "gray", "fontSize": "11" } },
+
+    { "type": "wokwi-text", "id": "n_legend", "top": -650, "left": 280, "attrs": {
+        "text": "Wire color legend:\n red=VCC  black=GND  green=SDA  gold=SCL\n orange=relay-IN  white=GPIO input\n purple=spare  blue=12V",
+        "color": "black", "fontSize": "11" } }
+  ],
+
+  "connections": [
+    [ "v_12v:VCC",     "pd_trig:1",     "blue",   [] ],
+    [ "pd_trig:2",     "buck:1",        "blue",   [] ],
+    [ "buck:2",        "v_5v:VCC",      "red",    [] ],
+    [ "pd_trig:2",     "v_12v_pump:VCC","blue",   [ "v0", "h60" ] ],
+
+    [ "v_5v:VCC",      "bb1:tp.1",      "red",    [] ],
+    [ "gnd_main:GND",  "bb1:tn.1",      "black",  [] ],
+    [ "bb1:tn.30",     "bb1:bn.30",     "black",  [ "v40", "h0" ] ],
+    [ "esp:5V",        "bb1:tp.5",      "red",    [] ],
+    [ "esp:GND.1",     "bb1:tn.5",      "black",  [] ],
+    [ "esp:3V3",       "bb1:bp.5",      "red",    [] ],
+    [ "esp:GND.2",     "bb1:bn.5",      "black",  [] ],
+
+    [ "am2315c:VCC",   "bb1:bp.15",     "red",    [] ],
+    [ "am2315c:GND",   "bb1:bn.15",     "black",  [] ],
+    [ "am2315c:SDA",   "esp:6",         "green",  [] ],
+
+    [ "chirp:VCC",     "bb1:bp.10",     "red",    [] ],
+    [ "chirp:GND",     "bb1:bn.10",     "black",  [] ],
+    [ "chirp:SIG",     "esp:7",         "gold",   [] ],
+
+    [ "r_sda:1",       "esp:6",         "green",  [] ],
+    [ "r_sda:2",       "bb1:bp.20",     "red",    [] ],
+    [ "r_scl:1",       "esp:7",         "gold",   [] ],
+    [ "r_scl:2",       "bb1:bp.21",     "red",    [] ],
+
+    [ "relay:VCC",     "bb1:tp.10",     "red",    [] ],
+    [ "relay:GND",     "bb1:tn.10",     "black",  [] ],
+    [ "relay:IN1",     "esp:18",        "orange", [] ],
+    [ "relay:IN2",     "esp:19",        "purple", [] ],
+
+    [ "v_12v_pump:VCC","relay:COM1",    "blue",   [] ],
+    [ "relay:NO1",     "r_led:1",       "red",    [] ],
+    [ "r_led:2",       "pump_led:A",    "red",    [] ],
+    [ "pump_led:C",    "gnd_main:GND",  "black",  [ "v0", "h-200" ] ],
+
+    [ "float_sw:1.l",  "esp:14",        "white",  [] ],
+    [ "float_sw:2.l",  "bb1:bn.25",     "black",  [] ]
+  ],
+
+  "dependencies": {}
+}

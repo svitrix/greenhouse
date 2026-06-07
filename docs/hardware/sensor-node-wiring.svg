@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1320 980" font-family="-apple-system, Segoe UI, sans-serif">
+  <style>
+    .title       { font-size: 20px; font-weight: bold; }
+    .subtitle    { font-size: 13px; fill: #555; }
+    .group-title { font-size: 12px; font-weight: bold; fill: #444; letter-spacing: 1px; }
+    .lbl         { font-size: 13px; }
+    .lbl-bold    { font-size: 13px; font-weight: bold; }
+    .pin         { font-size: 11px; font-weight: bold; }
+    .net         { font-size: 11px; fill: #222; }
+    .note        { font-size: 11px; fill: #555; font-style: italic; }
+    .sub         { font-size: 11px; fill: #666; }
+    .legend      { font-size: 12px; }
+
+    .box-mcu     { fill: #eef3ff; stroke: #2a4a8b; stroke-width: 2; }
+    .box-batt    { fill: #fff4dc; stroke: #b07000; stroke-width: 1.5; }
+    .box-prot    { fill: #ffe8e8; stroke: #b03030; stroke-width: 1.5; }
+    .box-sens    { fill: #e8ffe8; stroke: #2a7a2a; stroke-width: 1.5; }
+    .box-mosfet  { fill: #f3e8ff; stroke: #6a3098; stroke-width: 1.5; }
+    .box-pass    { fill: #fff; stroke: #888; stroke-width: 1; }
+    .box-usb     { fill: #e0e0e0; stroke: #333; stroke-width: 1; }
+    .box-rail    { fill: #fff8c0; stroke: #b8a000; stroke-width: 1.5; }
+
+    .w-bat       { stroke: #cc0000; stroke-width: 2.5; fill: none; }
+    .w-gnd       { stroke: #000000; stroke-width: 2.5; fill: none; }
+    .w-3v3       { stroke: #e88000; stroke-width: 2.2; fill: none; }
+    .w-3v3g      { stroke: #c0008c; stroke-width: 2.2; fill: none; }
+    .w-sda       { stroke: #0080c0; stroke-width: 2; fill: none; }
+    .w-scl       { stroke: #b08000; stroke-width: 2; fill: none; }
+    .w-gpio      { stroke: #008040; stroke-width: 1.8; fill: none; }
+    .w-usb       { stroke: #888; stroke-width: 1.5; stroke-dasharray: 4,3; fill: none; }
+  </style>
+
+  <!-- ============================= TITLE ============================= -->
+  <text x="660" y="32" text-anchor="middle" class="title">Sensor-node — wiring schematic</text>
+  <text x="660" y="52" text-anchor="middle" class="subtitle">
+    ESP32-C6 SuperMini · Murata US18650VTC6 · AM2315C · Chirp! · sensor power gate · battery sense
+  </text>
+
+  <!-- ============================= USB-C (top) ============================= -->
+  <rect x="540" y="80" width="220" height="38" class="box-usb"/>
+  <text x="650" y="104" text-anchor="middle" class="lbl">USB-C (charge + flash + USB-CDC)</text>
+  <path d="M 650 118 V 158" class="w-usb"/>
+  <text x="660" y="140" class="sub">5 V VBUS → onboard TP4057</text>
+
+  <!-- ============================= ESP32-C6 SuperMini (center) ============================= -->
+  <rect x="480" y="158" width="340" height="660" class="box-mcu"/>
+  <text x="650" y="184" text-anchor="middle" class="lbl-bold">ESP32-C6 SuperMini</text>
+  <text x="650" y="202" text-anchor="middle" class="sub">onboard: TP4057 charge IC · ME6211 LDO · WS2812 on GP8</text>
+
+  <!-- Left side pins (battery side) -->
+  <g id="mcu-pins-left">
+    <!-- 5V / BAT+ -->
+    <circle cx="480" cy="260" r="4" fill="#cc0000"/>
+    <text x="490" y="264" class="pin">5V  /  BAT+</text>
+    <text x="490" y="280" class="sub">(check continuity: top pin vs back-side pad)</text>
+
+    <!-- GND -->
+    <circle cx="480" cy="330" r="4" fill="#000000"/>
+    <text x="490" y="334" class="pin">GND</text>
+  </g>
+
+  <!-- Right side pins (sensor side) -->
+  <g id="mcu-pins-right">
+    <!-- 3V3 OUT -->
+    <circle cx="820" cy="260" r="4" fill="#e88000"/>
+    <text x="810" y="264" text-anchor="end" class="pin">3V3 OUT</text>
+    <text x="810" y="280" text-anchor="end" class="sub">(LDO output, ~200 mA max)</text>
+
+    <!-- GND (mirror, for sensor return) -->
+    <circle cx="820" cy="330" r="4" fill="#000000"/>
+    <text x="810" y="334" text-anchor="end" class="pin">GND</text>
+
+    <!-- GP0 -->
+    <circle cx="820" cy="400" r="4" fill="#008040"/>
+    <text x="810" y="404" text-anchor="end" class="pin">GP0 — ADC1_CH0</text>
+    <text x="810" y="420" text-anchor="end" class="sub">battery sense (divider)</text>
+
+    <!-- GP4 -->
+    <circle cx="820" cy="470" r="4" fill="#008040"/>
+    <text x="810" y="474" text-anchor="end" class="pin">GP4 — MOSFET gate</text>
+    <text x="810" y="490" text-anchor="end" class="sub">LOW = sensors ON</text>
+
+    <!-- GP6 SDA -->
+    <circle cx="820" cy="540" r="4" fill="#0080c0"/>
+    <text x="810" y="544" text-anchor="end" class="pin">GP6 — I²C SDA</text>
+    <text x="810" y="560" text-anchor="end" class="sub">(LP_I2C_SDA capable)</text>
+
+    <!-- GP7 SCL -->
+    <circle cx="820" cy="610" r="4" fill="#b08000"/>
+    <text x="810" y="614" text-anchor="end" class="pin">GP7 — I²C SCL</text>
+
+    <!-- GP8 info -->
+    <circle cx="820" cy="680" r="4" fill="#999"/>
+    <text x="810" y="684" text-anchor="end" class="sub">GP8 — WS2812 (onboard, not wired out)</text>
+
+    <!-- Reserved -->
+    <text x="810" y="740" text-anchor="end" class="note">GP12 / GP13 — native USB · DO NOT use</text>
+    <text x="810" y="758" text-anchor="end" class="note">GP9, GP15 — strapping · avoid</text>
+  </g>
+
+  <!-- ============================= BATTERY GROUP (left of MCU) ============================= -->
+  <text x="160" y="80" text-anchor="middle" class="group-title">BATTERY  ·  POWER  IN</text>
+
+  <!-- 18650 cell + holder -->
+  <rect x="40" y="120" width="240" height="90" rx="42" class="box-batt"/>
+  <text x="160" y="148" text-anchor="middle" class="lbl-bold">Murata US18650VTC6</text>
+  <text x="160" y="166" text-anchor="middle" class="sub">3120 mAh · 3.2 – 4.2 V</text>
+  <text x="160" y="184" text-anchor="middle" class="sub">in leaf-spring holder (wires per cell)</text>
+  <text x="55"  y="148" class="lbl"  fill="#000">−</text>
+  <text x="260" y="148" class="lbl"  fill="#cc0000">+</text>
+
+  <!-- Holder wires -->
+  <path d="M 280 145 L 308 145 L 308 260 L 340 260" class="w-bat"/>
+  <path d="M 40  175 L 18  175 L 18  330 L 340 330" class="w-gnd"/>
+  <text x="312" y="200" class="net">to B+</text>
+  <text x="22"  y="305" class="net">to B−</text>
+
+  <!-- Protection module -->
+  <rect x="340" y="230" width="120" height="120" class="box-prot"/>
+  <text x="400" y="258" text-anchor="middle" class="lbl-bold">1S Protection</text>
+  <text x="400" y="274" text-anchor="middle" class="sub">DW01 + FS8205</text>
+  <text x="400" y="320" text-anchor="middle" class="note">cut-off:</text>
+  <text x="400" y="334" text-anchor="middle" class="note">V &lt; 2.5 V → off</text>
+
+  <!-- Pads B+/B-/P+/P- -->
+  <circle cx="340" cy="260" r="3" fill="#cc0000"/>
+  <text x="346" y="263" class="pin">B+</text>
+  <circle cx="340" cy="330" r="3" fill="#000"/>
+  <text x="346" y="333" class="pin">B−</text>
+  <circle cx="460" cy="260" r="3" fill="#cc0000"/>
+  <text x="454" y="263" text-anchor="end" class="pin">P+</text>
+  <circle cx="460" cy="330" r="3" fill="#000"/>
+  <text x="454" y="333" text-anchor="end" class="pin">P−</text>
+
+  <!-- Wires from P+/P- to SuperMini 5V/GND -->
+  <path d="M 460 260 L 480 260" class="w-bat"/>
+  <path d="M 460 330 L 480 330" class="w-gnd"/>
+  <text x="468" y="252" class="net">+BAT</text>
+  <text x="468" y="350" class="net">GND</text>
+
+  <!-- ============================= SENSOR / MOSFET GROUP (right of MCU) ============================= -->
+  <text x="1090" y="80" text-anchor="middle" class="group-title">SENSORS  ·  GATED  3V3  RAIL</text>
+
+  <!-- 3V3 OUT line goes to MOSFET source -->
+  <path d="M 820 260 L 880 260" class="w-3v3"/>
+
+  <!-- AO3401 P-MOSFET block -->
+  <rect x="880" y="230" width="120" height="100" class="box-mosfet"/>
+  <text x="940" y="252" text-anchor="middle" class="lbl-bold">AO3401</text>
+  <text x="940" y="268" text-anchor="middle" class="sub">P-MOSFET high-side</text>
+  <text x="940" y="284" text-anchor="middle" class="sub">SOT-23</text>
+
+  <!-- MOSFET pins -->
+  <circle cx="880" cy="260" r="3" fill="#e88000"/>
+  <text x="868" y="263" text-anchor="end" class="pin">S</text>
+  <circle cx="940" cy="330" r="3" fill="#008040"/>
+  <text x="932" y="346" text-anchor="end" class="pin">G</text>
+  <circle cx="1000" cy="260" r="3" fill="#c0008c"/>
+  <text x="1010" y="263" class="pin">D</text>
+
+  <!-- Gate driver: GP4 → R_G 100k → G -->
+  <path d="M 820 470 L 940 470 L 940 348" class="w-gpio"/>
+  <rect x="922" y="348" width="36" height="14" class="box-pass"/>
+  <text x="940" y="376" text-anchor="middle" class="sub">R_G 100k</text>
+
+  <!-- Gate pull-up to S: G → R_PU 100k → S -->
+  <path d="M 870 330 L 870 220 L 880 220" class="w-3v3"/>
+  <path d="M 930 330 L 870 330" class="w-3v3"/>
+  <rect x="848" y="225" width="14" height="50" class="box-pass"/>
+  <text x="855" y="297" text-anchor="middle" class="sub">R_PU</text>
+  <text x="855" y="311" text-anchor="middle" class="sub">100k</text>
+  <text x="838" y="220" text-anchor="end" class="note">default OFF</text>
+
+  <!-- D → gated 3V3 rail (horizontal bar across right area) -->
+  <path d="M 1000 260 L 1080 260 L 1080 410" class="w-3v3g"/>
+  <rect x="1060" y="408" width="220" height="22" class="box-rail"/>
+  <text x="1170" y="424" text-anchor="middle" class="lbl-bold">GATED 3V3 RAIL</text>
+
+  <!-- AM2315C sensor -->
+  <rect x="1080" y="460" width="200" height="120" class="box-sens"/>
+  <text x="1180" y="484" text-anchor="middle" class="lbl-bold">AM2315C</text>
+  <text x="1180" y="500" text-anchor="middle" class="sub">I²C @ 0x38</text>
+  <text x="1180" y="516" text-anchor="middle" class="sub">air: T + RH</text>
+  <text x="1180" y="534" text-anchor="middle" class="note">power: 3V3 only!</text>
+
+  <!-- AM2315C pins -->
+  <circle cx="1080" cy="555" r="3" fill="#e88000"/>
+  <text x="1090" y="558" class="pin">VCC</text>
+  <circle cx="1140" cy="555" r="3" fill="#000"/>
+  <text x="1148" y="558" class="pin">GND</text>
+  <circle cx="1200" cy="555" r="3" fill="#0080c0"/>
+  <text x="1208" y="558" class="pin">SDA</text>
+  <circle cx="1260" cy="555" r="3" fill="#b08000"/>
+  <text x="1268" y="558" class="pin">SCL</text>
+
+  <!-- AM2315C wires -->
+  <path d="M 1080 555 L 1080 430" class="w-3v3g"/>
+  <path d="M 1140 555 L 1140 660 L 1300 660 L 1300 330 L 820 330" class="w-gnd"/>
+  <path d="M 1200 555 L 1200 700 L 870 700 L 870 540 L 820 540" class="w-sda"/>
+  <path d="M 1260 555 L 1260 720 L 850 720 L 850 610 L 820 610" class="w-scl"/>
+
+  <!-- Chirp sensor -->
+  <rect x="1080" y="610" width="200" height="120" class="box-sens" transform="translate(0 130)"/>
+  <text x="1180" y="754" text-anchor="middle" class="lbl-bold">Chirp! soil</text>
+  <text x="1180" y="770" text-anchor="middle" class="sub">I²C @ 0x20</text>
+  <text x="1180" y="786" text-anchor="middle" class="sub">capacitive · soil moisture</text>
+  <text x="1180" y="804" text-anchor="middle" class="note">R=VCC, B=GND, Bl=SDA, Y=SCL</text>
+
+  <!-- Chirp pins -->
+  <circle cx="1080" cy="825" r="3" fill="#e88000"/>
+  <text x="1090" y="828" class="pin">VCC</text>
+  <circle cx="1140" cy="825" r="3" fill="#000"/>
+  <text x="1148" y="828" class="pin">GND</text>
+  <circle cx="1200" cy="825" r="3" fill="#0080c0"/>
+  <text x="1208" y="828" class="pin">SDA</text>
+  <circle cx="1260" cy="825" r="3" fill="#b08000"/>
+  <text x="1268" y="828" class="pin">SCL</text>
+
+  <!-- Chirp wires (share bus with AM2315C) -->
+  <path d="M 1080 825 L 1080 430" class="w-3v3g"/>
+  <path d="M 1140 825 L 1140 660" class="w-gnd"/>
+  <path d="M 1200 825 L 1200 700" class="w-sda"/>
+  <path d="M 1260 825 L 1260 720" class="w-scl"/>
+
+  <!-- Pull-ups 4.7k to gated 3V3 -->
+  <rect x="1024" y="465" width="14" height="40" class="box-pass"/>
+  <text x="1031" y="460" text-anchor="middle" class="sub">R1</text>
+  <text x="1015" y="487" text-anchor="middle" class="sub">4k7</text>
+  <path d="M 1031 465 L 1031 430" class="w-3v3g"/>
+  <path d="M 1031 505 L 1031 700 L 870 700" class="w-sda"/>
+  <text x="1031" y="715" text-anchor="middle" class="sub">SDA pull-up</text>
+
+  <rect x="996" y="465" width="14" height="40" class="box-pass"/>
+  <text x="1003" y="460" text-anchor="middle" class="sub">R2</text>
+  <text x="988"  y="487" text-anchor="middle" class="sub">4k7</text>
+  <path d="M 1003 465 L 1003 430" class="w-3v3g"/>
+  <path d="M 1003 505 L 1003 720 L 850 720" class="w-scl"/>
+  <text x="1003" y="735" text-anchor="middle" class="sub">SCL pull-up</text>
+
+  <!-- ============================= BATTERY DIVIDER (bottom) ============================= -->
+  <text x="200" y="500" class="group-title">BATTERY  ·  SENSE  DIVIDER</text>
+
+  <!-- Wire tap from +BAT line (at protection P+) -->
+  <path d="M 470 260 L 470 540 L 200 540" class="w-bat"/>
+
+  <!-- R3 100k -->
+  <rect x="180" y="535" width="14" height="40" class="box-pass" transform="rotate(-90 187 555)"/>
+  <text x="187" y="528" text-anchor="middle" class="sub">R3 100k</text>
+
+  <!-- ADC node -->
+  <circle cx="160" cy="555" r="3" fill="#008040"/>
+  <text x="160" y="528" text-anchor="middle" class="net">V_ADC ≈ V_bat / 2</text>
+
+  <!-- R4 100k to GND -->
+  <rect x="155" y="565" width="14" height="40" class="box-pass"/>
+  <text x="162" y="618" text-anchor="middle" class="sub">R4 100k</text>
+
+  <!-- GND of divider -->
+  <path d="M 160 605 L 160 660 L 18 660" class="w-gnd"/>
+
+  <!-- Divider output to GP0 -->
+  <path d="M 160 555 L 160 400 L 820 400" class="w-gpio"/>
+  <text x="200" y="395" class="net">→ GP0 (ADC1_CH0)</text>
+
+  <!-- Sleep cost note -->
+  <text x="60"  y="685" class="note">sleep cost: 4.2V / 200kΩ ≈ 21 µA (always flowing)</text>
+  <text x="60"  y="700" class="note">acceptable for MVP battery life target</text>
+
+  <!-- ============================= LEGEND ============================= -->
+  <g id="legend" transform="translate(40, 830)">
+    <rect x="0" y="0" width="540" height="130" fill="#fafafa" stroke="#aaa" stroke-width="1"/>
+    <text x="270" y="20" text-anchor="middle" class="lbl-bold">Wire / net legend</text>
+
+    <line x1="20" y1="40" x2="60" y2="40" class="w-bat"/>
+    <text x="68" y="44" class="legend">+BAT (3.2–4.2 V)</text>
+
+    <line x1="20" y1="60" x2="60" y2="60" class="w-gnd"/>
+    <text x="68" y="64" class="legend">GND</text>
+
+    <line x1="20" y1="80" x2="60" y2="80" class="w-3v3"/>
+    <text x="68" y="84" class="legend">3V3 OUT (always-on, LDO)</text>
+
+    <line x1="20" y1="100" x2="60" y2="100" class="w-3v3g"/>
+    <text x="68" y="104" class="legend">3V3 gated (MOSFET-switched, sensors only)</text>
+
+    <line x1="280" y1="40" x2="320" y2="40" class="w-sda"/>
+    <text x="328" y="44" class="legend">I²C SDA</text>
+
+    <line x1="280" y1="60" x2="320" y2="60" class="w-scl"/>
+    <text x="328" y="64" class="legend">I²C SCL</text>
+
+    <line x1="280" y1="80" x2="320" y2="80" class="w-gpio"/>
+    <text x="328" y="84" class="legend">GPIO signal (gate, ADC)</text>
+
+    <line x1="280" y1="100" x2="320" y2="100" class="w-usb"/>
+    <text x="328" y="104" class="legend">USB-C (charging, does not power MCU directly)</text>
+  </g>
+
+  <!-- BOM add-ons (right-bottom corner) -->
+  <g id="bom-add" transform="translate(620, 830)">
+    <rect x="0" y="0" width="660" height="130" fill="#fafafa" stroke="#aaa" stroke-width="1"/>
+    <text x="330" y="20" text-anchor="middle" class="lbl-bold">BOM add-ons for your list (small parts)</text>
+    <text x="20" y="42"  class="legend">• AO3401  ×1  — p-MOSFET SOT-23 (or SI2301)</text>
+    <text x="20" y="62"  class="legend">• 4.7 kΩ ×2  — I²C pull-ups (R1, R2)</text>
+    <text x="20" y="82"  class="legend">• 100 kΩ ×4  — gate series (R_G), gate pull-up (R_PU), divider (R3, R4)</text>
+    <text x="20" y="102" class="legend">• 100 nF ×2  — decoupling: one on VCC AM2315C, one on VCC Chirp (to GND near the pin)</text>
+    <text x="340" y="42"  class="legend">• DuPont F-F 20 cm ×8 — for Expansion Board connectors</text>
+    <text x="340" y="62"  class="legend">• Solder + flux + heat-shrink tube — for holder ↔ protection</text>
+    <text x="340" y="82"  class="legend">• (opt.) JST PH 2.0 pair — if you want a disconnect-able holder</text>
+    <text x="340" y="102" class="legend">• AO3401 + 100k×3 + 4.7k×2 = ~$1 on AliExpress</text>
+  </g>
+</svg>
