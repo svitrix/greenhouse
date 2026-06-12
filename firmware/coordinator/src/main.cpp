@@ -407,7 +407,14 @@ void runOperational(gh::infra::SerialLogger&              log,
 #endif
 
     // --- HTTP Basic Auth + REST v2 server ---
+    // Auth + rate-limit are installed as *server-global* middleware so every
+    // handler — including /api/dashboard, the /api/events SSE source and the
+    // serveStatic SPA fallback — is protected by a single auth point. Per-route
+    // .addMiddleware() is intentionally NOT used (it would double-hash).
     static AsyncWebServer server(80);
+    static AsyncRateLimitMiddleware rateLimit;
+    rateLimit.setMaxRequests(gh::coord::CoordinatorConfig::kAuthRateLimitMaxRequests);
+    rateLimit.setWindowSize(gh::coord::CoordinatorConfig::kAuthRateLimitWindowS);
     static AsyncAuthenticationMiddleware basicAuth;
     basicAuth.setAuthType(AsyncAuthType::AUTH_BASIC);
     basicAuth.setRealm("Greenhouse Admin");
@@ -455,25 +462,50 @@ void runOperational(gh::infra::SerialLogger&              log,
             }
 
             uint8_t incoming[gh::domain::AdminCreds::kHashLen];
-            gh::infra::hashPassword(pass, loaded.value.salt, incoming);
+            // Verify against the KDF the record was written with (iterations is
+            // self-describing; 0 == legacy single SHA-256). Constant-time
+            // compare below is unchanged.
+            gh::infra::hashPassword(pass, loaded.value.salt,
+                                    loaded.value.iterations, incoming);
 
             uint8_t diff = 0;
             for (std::size_t i = 0; i < gh::domain::AdminCreds::kHashLen; ++i) {
                 diff = static_cast<uint8_t>(
                     diff | (incoming[i] ^ loaded.value.password_hash[i]));
             }
-            return diff == 0;
+            if (diff != 0) {
+                return false;
+            }
+
+            // Transparent migration: a correct password stored under the legacy
+            // single-SHA round, or an older PBKDF2 iteration count, is re-hashed
+            // with the current default and persisted. Same salt is fine -
+            // raising the work factor is the point. A failed save just leaves
+            // the old (still-valid) record in place; auth still succeeds.
+            if (loaded.value.iterations != gh::infra::kPbkdf2DefaultIterations) {
+                gh::domain::AdminCreds upgraded = loaded.value;
+                upgraded.iterations = gh::infra::kPbkdf2DefaultIterations;
+                gh::infra::hashPassword(pass, upgraded.salt,
+                                        upgraded.iterations, upgraded.password_hash);
+                (void)admin_creds_store.save(upgraded);
+            }
+            return true;
         });
 
-    static gh::presentation::RestNodesRoutes        rn_nodes  {node_registry, alias_store, clock, basicAuth};
-    static gh::presentation::RestNodeAliasRoutes    rn_alias  {node_registry, alias_store, basicAuth};
-    static gh::presentation::RestNodeDeleteRoutes   rn_delete {node_registry, alias_store, history_store, zb_net, basicAuth};
-    static gh::presentation::RestHistoryRoutes    rn_hist   {history_store, clock, basicAuth};
-    static gh::presentation::RestPumpRoutes       rn_pump   {irrigation_service, pump, basicAuth};
-    static gh::presentation::RestStatusRoutes     rn_status {node_registry, clock, mqtt, sysinfo, device_id.c_str(), basicAuth};
-    static gh::presentation::RestConfigRoutes     rn_cfg    {auto_water_store, mqttStore, wifiStore, basicAuth};
-    static gh::presentation::RestZigbeeRoutes     rn_zb     {zb_net, basicAuth};
-    static gh::presentation::RestAutoWaterRoutes  rn_aw     {irrigation_service, basicAuth};
+    // Global middleware order: rate-limit first (cheap reject of brute force),
+    // then auth. Applies to every handler registered on `server`.
+    server.addMiddleware(&rateLimit);
+    server.addMiddleware(&basicAuth);
+
+    static gh::presentation::RestNodesRoutes        rn_nodes  {node_registry, alias_store, clock};
+    static gh::presentation::RestNodeAliasRoutes    rn_alias  {node_registry, alias_store};
+    static gh::presentation::RestNodeDeleteRoutes   rn_delete {node_registry, alias_store, history_store, zb_net};
+    static gh::presentation::RestHistoryRoutes    rn_hist   {history_store, clock};
+    static gh::presentation::RestPumpRoutes       rn_pump   {irrigation_service, pump};
+    static gh::presentation::RestStatusRoutes     rn_status {node_registry, clock, mqtt, sysinfo, device_id.c_str()};
+    static gh::presentation::RestConfigRoutes     rn_cfg    {auto_water_store, mqttStore, wifiStore};
+    static gh::presentation::RestZigbeeRoutes     rn_zb     {zb_net};
+    static gh::presentation::RestAutoWaterRoutes  rn_aw     {irrigation_service};
 
     rn_nodes .registerOn(server);
     rn_alias .registerOn(server);
@@ -525,12 +557,26 @@ void runOperational(gh::infra::SerialLogger&              log,
     {
         gh::domain::AnalyticsConfig acfg{};
         const auto load_res = analyticsStore.load(acfg);
-        if (load_res == gh::domain::ErrorCode::Ok && acfg.backend_url[0] != '\0') {
+        const bool url_is_https =
+            (std::strncmp(acfg.backend_url, "https://", 8) == 0);
+        if (load_res == gh::domain::ErrorCode::Ok && acfg.backend_url[0] != '\0'
+            && !url_is_https && !acfg.insecure_tls) {
+            // a plain http:// hub URL would ship the Bearer api_key +
+            // telemetry in cleartext. Refuse to arm the uploader unless the
+            // operator explicitly set the insecure dev flag in NVS.
+            log.error("analytics",
+                      "backend_url is not https:// and insecure_tls=false - disabled");
+        } else if (load_res == gh::domain::ErrorCode::Ok && acfg.backend_url[0] != '\0') {
             static gh::infra::LittleFsTelemetryQueue analytics_queue{};
             if (analytics_queue.begin() != gh::domain::ErrorCode::Ok) {
                 log.warn("analytics", "queue begin failed - disabled");
             } else {
-                static gh::infra::EspHttpsClient analytics_http{};
+                // thread the runtime insecure flag through. With no pinned
+                // CA the client only goes insecure when insecure_tls=true;
+                // otherwise it fails the TLS handshake closed.
+                static gh::infra::EspHttpsClient analytics_http{
+                    /*ca_cert_pem=*/nullptr,
+                    /*allow_insecure_dev=*/acfg.insecure_tls};
 
                 static char        s_device_id_buf[16] = {};
                 std::snprintf(s_device_id_buf, sizeof(s_device_id_buf), "gh-%s",
@@ -614,7 +660,14 @@ void runProvisioning(gh::infra::SerialLogger&              log,
     static gh::infra::CaptiveDnsServer dns{};
     dns.start(ap.softApIP());
 
-    static gh::infra::EspHttpsClient pairing_https{};
+    // Pairing runs inside the captive-portal /save handler — a physically
+    // present, operator-initiated, one-shot flow against a hub the operator
+    // typed by hand (the documented local-dev example is a plain http:// URL,
+    // e.g. http://192.168.1.42:8000/ingest). Allow dev-insecure here so that
+    // flow keeps working; the operational analytics path stays fail-closed by
+    // default (see runAnalytics composition below). No pinned CA at this stage.
+    static gh::infra::EspHttpsClient pairing_https{/*ca_cert_pem=*/nullptr,
+                                                   /*allow_insecure_dev=*/true};
     static gh::infra::EspPairingClient pairing_client{pairing_https};
 
     static gh::infra::ProvisioningWebServer web{

@@ -6,12 +6,23 @@
 using namespace gh::infra;
 using namespace gh::domain;
 
-void test_load_returns_not_found_when_empty() {
+void test_load_returns_config_not_found_when_empty() {
     NvsAnalyticsConfigStore s;
     s.clear();
     AnalyticsConfig cfg{};
-    TEST_ASSERT_EQUAL(static_cast<int>(ErrorCode::NotFound),
+    // Error codes unified with the other Nvs*Stores: ConfigNotFound replaces the
+    // former store-specific NotFound.
+    TEST_ASSERT_EQUAL(static_cast<int>(ErrorCode::ConfigNotFound),
                       static_cast<int>(s.load(cfg)));
+}
+
+void test_save_rejects_overlong_url() {
+    NvsAnalyticsConfigStore s;
+    s.clear();
+    AnalyticsConfig in{};
+    std::memset(in.backend_url, 'u', sizeof(in.backend_url));  // no NUL in bounds
+    TEST_ASSERT_EQUAL(static_cast<int>(ErrorCode::ValidationFailed),
+                      static_cast<int>(s.save(in)));
 }
 
 void test_save_and_load_roundtrip() {
@@ -37,7 +48,8 @@ void test_save_and_load_roundtrip() {
 void setup() {
     delay(2000);
     UNITY_BEGIN();
-    RUN_TEST(test_load_returns_not_found_when_empty);
+    RUN_TEST(test_load_returns_config_not_found_when_empty);
+    RUN_TEST(test_save_rejects_overlong_url);
     RUN_TEST(test_save_and_load_roundtrip);
     UNITY_END();
 }

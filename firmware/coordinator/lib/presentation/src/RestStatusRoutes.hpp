@@ -15,10 +15,9 @@ public:
                        gh::domain::IClock&            clock,
                        gh::domain::IMqttClient&       mqtt,
                        gh::domain::ISystemInfo&       sysinfo,
-                       const char*                    device_id,
-                       AsyncAuthenticationMiddleware& auth) noexcept
+                       const char*                    device_id) noexcept
         : reg_{reg}, clock_{clock}, mqtt_{mqtt}, sysinfo_{sysinfo},
-          device_id_{device_id}, auth_{auth} {}
+          device_id_{device_id} {}
 
     void registerOn(AsyncWebServer&) noexcept;
 
@@ -28,7 +27,6 @@ private:
     gh::domain::IMqttClient&       mqtt_;
     gh::domain::ISystemInfo&       sysinfo_;
     const char*                    device_id_;
-    AsyncAuthenticationMiddleware& auth_;
 };
 
 }  // namespace gh::presentation

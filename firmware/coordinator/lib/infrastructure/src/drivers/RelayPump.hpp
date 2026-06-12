@@ -27,6 +27,7 @@ public:
     RelayPump(IGpio& gpio, uint8_t pin) noexcept;
     gh::domain::ErrorCode turnOn()  noexcept override;
     gh::domain::ErrorCode turnOff() noexcept override;
+    gh::domain::ErrorCode lock()    noexcept override;
     [[nodiscard]] gh::domain::PumpState state() const noexcept override;
 private:
     IGpio&  gpio_;

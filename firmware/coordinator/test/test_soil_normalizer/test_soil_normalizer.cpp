@@ -22,42 +22,42 @@ SoilSample makeRaw(uint16_t raw_cap) {
 
 void test_normalize_midpoint_returns_50pct() {
     FakeSoilCalibrationStore store;
-    SoilNormalizer n(store, SoilCalibration{300, 900});
+    SoilNormalizer n(store, SoilCalibration{.raw_dry = 300, .raw_wet = 900});
     auto out = n.normalize(makeRaw(600));
     TEST_ASSERT_EQUAL_UINT8(50, out.moisture_pct);
 }
 
 void test_normalize_at_dry_boundary_returns_0() {
     FakeSoilCalibrationStore store;
-    SoilNormalizer n(store, SoilCalibration{300, 900});
+    SoilNormalizer n(store, SoilCalibration{.raw_dry = 300, .raw_wet = 900});
     auto out = n.normalize(makeRaw(300));
     TEST_ASSERT_EQUAL_UINT8(0, out.moisture_pct);
 }
 
 void test_normalize_at_wet_boundary_returns_100() {
     FakeSoilCalibrationStore store;
-    SoilNormalizer n(store, SoilCalibration{300, 900});
+    SoilNormalizer n(store, SoilCalibration{.raw_dry = 300, .raw_wet = 900});
     auto out = n.normalize(makeRaw(900));
     TEST_ASSERT_EQUAL_UINT8(100, out.moisture_pct);
 }
 
 void test_normalize_below_dry_clips_to_0() {
     FakeSoilCalibrationStore store;
-    SoilNormalizer n(store, SoilCalibration{300, 900});
+    SoilNormalizer n(store, SoilCalibration{.raw_dry = 300, .raw_wet = 900});
     auto out = n.normalize(makeRaw(200));
     TEST_ASSERT_EQUAL_UINT8(0, out.moisture_pct);
 }
 
 void test_normalize_above_wet_clips_to_100() {
     FakeSoilCalibrationStore store;
-    SoilNormalizer n(store, SoilCalibration{300, 900});
+    SoilNormalizer n(store, SoilCalibration{.raw_dry = 300, .raw_wet = 900});
     auto out = n.normalize(makeRaw(1000));
     TEST_ASSERT_EQUAL_UINT8(100, out.moisture_pct);
 }
 
 void test_normalize_preserves_other_fields() {
     FakeSoilCalibrationStore store;
-    SoilNormalizer n(store, SoilCalibration{300, 900});
+    SoilNormalizer n(store, SoilCalibration{.raw_dry = 300, .raw_wet = 900});
     auto out = n.normalize(makeRaw(600));
     TEST_ASSERT_EQUAL_UINT32(1234, out.timestamp_ms);
     TEST_ASSERT_EQUAL_UINT16(600, out.raw_capacitance);
@@ -66,8 +66,8 @@ void test_normalize_preserves_other_fields() {
 
 void test_setCalibration_rejects_invalid_keeps_old() {
     FakeSoilCalibrationStore store;
-    SoilNormalizer n(store, SoilCalibration{300, 900});
-    auto err = n.setCalibration(SoilCalibration{700, 500});  // dry > wet
+    SoilNormalizer n(store, SoilCalibration{.raw_dry = 300, .raw_wet = 900});
+    auto err = n.setCalibration(SoilCalibration{.raw_dry = 700, .raw_wet = 500});  // dry > wet
     TEST_ASSERT_EQUAL(static_cast<int>(ErrorCode::SensorOutOfRange),
                       static_cast<int>(err));
     TEST_ASSERT_EQUAL_INT(0, store.save_calls);
@@ -78,8 +78,8 @@ void test_setCalibration_rejects_invalid_keeps_old() {
 
 void test_setCalibration_writes_through_to_store() {
     FakeSoilCalibrationStore store;
-    SoilNormalizer n(store, SoilCalibration{300, 900});
-    auto err = n.setCalibration(SoilCalibration{350, 800});
+    SoilNormalizer n(store, SoilCalibration{.raw_dry = 300, .raw_wet = 900});
+    auto err = n.setCalibration(SoilCalibration{.raw_dry = 350, .raw_wet = 800});
     TEST_ASSERT_EQUAL(static_cast<int>(ErrorCode::Ok),
                       static_cast<int>(err));
     TEST_ASSERT_EQUAL_INT(1, store.save_calls);
@@ -93,8 +93,8 @@ void test_setCalibration_writes_through_to_store() {
 void test_setCalibration_store_failure_still_updates_in_RAM() {
     FakeSoilCalibrationStore store;
     store.next_save_error = ErrorCode::ConfigStoreFailed;
-    SoilNormalizer n(store, SoilCalibration{300, 900});
-    auto err = n.setCalibration(SoilCalibration{350, 800});
+    SoilNormalizer n(store, SoilCalibration{.raw_dry = 300, .raw_wet = 900});
+    auto err = n.setCalibration(SoilCalibration{.raw_dry = 350, .raw_wet = 800});
     TEST_ASSERT_EQUAL(static_cast<int>(ErrorCode::ConfigStoreFailed),
                       static_cast<int>(err));
     auto cur = n.calibration();
@@ -105,7 +105,7 @@ void test_setCalibration_store_failure_still_updates_in_RAM() {
 void test_normalize_with_invalid_initial_returns_pct_0() {
     FakeSoilCalibrationStore store;
     // Constructor accepts invalid calibration silently (noexcept).
-    SoilNormalizer n(store, SoilCalibration{500, 500});  // dry == wet
+    SoilNormalizer n(store, SoilCalibration{.raw_dry = 500, .raw_wet = 500});  // dry == wet
     auto out = n.normalize(makeRaw(600));
     TEST_ASSERT_EQUAL_UINT8(0, out.moisture_pct);
 }

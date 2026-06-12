@@ -14,7 +14,12 @@ gh::domain::ErrorCode NvsWifiFailCounterStore::increment() noexcept {
     Preferences p;
     if (!p.begin(kNs, /*readOnly=*/false)) return gh::domain::ErrorCode::ConfigStoreFailed;
     const uint8_t v = p.getUChar(kKey, 0);
-    p.putUChar(kKey, static_cast<uint8_t>(v + 1));
+    // Saturate instead of wrapping: the caller only compares against a small
+    // threshold (kMaxConsecutiveFailedBoots), so 255 is a permanent "tripped".
+    constexpr uint8_t kMaxCount = 255;
+    if (v < kMaxCount) {
+        p.putUChar(kKey, static_cast<uint8_t>(v + 1));
+    }
     p.end();
     return gh::domain::ErrorCode::Ok;
 }

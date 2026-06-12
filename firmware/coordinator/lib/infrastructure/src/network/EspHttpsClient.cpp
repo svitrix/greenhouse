@@ -9,12 +9,35 @@ namespace gh::infra {
 using gh::domain::ErrorCode;
 using gh::domain::HttpResponse;
 
-EspHttpsClient::EspHttpsClient(const char* ca_cert_pem) noexcept {
-    if (ca_cert_pem) {
-        secure_.setCACert(ca_cert_pem);
-    } else {
-        secure_.setInsecure();
+EspHttpsClient::EspHttpsClient(const char* ca_cert_pem,
+                               bool        allow_insecure_dev) noexcept
+    : ca_cert_pem_{ca_cert_pem}, allow_insecure_dev_{allow_insecure_dev} {}
+
+bool EspHttpsClient::prepareTransport_(const char*   url,
+                                       bool&         is_https_out,
+                                       HttpResponse& fail_out) noexcept {
+    is_https_out = (std::strncmp(url, "https://", 8) == 0);
+
+    // a plain http:// URL would leak the Bearer api_key + telemetry in
+    // cleartext. Refuse it unless the operator opted into dev-insecure mode.
+    if (!is_https_out && !allow_insecure_dev_) {
+        fail_out = HttpResponse{-1, 0, ErrorCode::HttpTransportFailure};
+        return false;
     }
+
+    if (is_https_out) {
+        if (ca_cert_pem_ != nullptr) {
+            secure_.setCACert(ca_cert_pem_);
+        } else if (allow_insecure_dev_) {
+            // no pinned CA — accept any cert ONLY in explicit dev mode.
+            secure_.setInsecure();
+        } else {
+            // C1 fail-closed: no CA and not dev-insecure → do NOT connect.
+            fail_out = HttpResponse{-1, 0, ErrorCode::TlsHandshakeFailed};
+            return false;
+        }
+    }
+    return true;
 }
 
 HttpResponse EspHttpsClient::postJson(const char* url,
@@ -22,10 +45,15 @@ HttpResponse EspHttpsClient::postJson(const char* url,
                                       const char* body,
                                       size_t      body_len,
                                       uint32_t    timeout_ms) noexcept {
+    bool         is_https = false;
+    HttpResponse fail{};
+    if (!prepareTransport_(url, is_https, fail)) {
+        return fail;
+    }
+
     HTTPClient http;
     http.setTimeout(timeout_ms);
 
-    const bool is_https = (std::strncmp(url, "https://", 8) == 0);
     const bool ok = is_https ? http.begin(secure_, url) : http.begin(url);
     if (!ok) {
         return HttpResponse{-1, 0, ErrorCode::HttpTransportFailure};
@@ -71,10 +99,15 @@ HttpResponse EspHttpsClient::postJsonWithBody(const char* url,
                                               size_t      body_out_size) noexcept {
     if (body_out != nullptr && body_out_size > 0) body_out[0] = '\0';
 
+    bool         is_https = false;
+    HttpResponse fail{};
+    if (!prepareTransport_(url, is_https, fail)) {
+        return fail;
+    }
+
     HTTPClient http;
     http.setTimeout(timeout_ms);
 
-    const bool is_https = (std::strncmp(url, "https://", 8) == 0);
     const bool ok = is_https ? http.begin(secure_, url) : http.begin(url);
     if (!ok) {
         return HttpResponse{-1, 0, ErrorCode::HttpTransportFailure};
@@ -92,10 +125,23 @@ HttpResponse EspHttpsClient::postJsonWithBody(const char* url,
         static_cast<size_t>(body_len)
     );
 
+    // read the response into the caller's fixed buffer via a bounded
+    // stream read instead of http.getString() (which heap-allocates an
+    // unbounded Arduino String from an attacker/buggy-hub-controlled body).
+    // Cap at the smaller of the caller buffer and a known Content-Length so a
+    // short body does not stall readBytes() for the whole stream timeout.
     if (body_out != nullptr && body_out_size > 0) {
-        const String s = http.getString();
-        std::strncpy(body_out, s.c_str(), body_out_size - 1);
-        body_out[body_out_size - 1] = '\0';
+        WiFiClient* stream = http.getStreamPtr();
+        if (stream != nullptr) {
+            size_t want = body_out_size - 1;
+            const int content_len = http.getSize();  // -1 if chunked / unknown
+            if (content_len >= 0 && static_cast<size_t>(content_len) < want) {
+                want = static_cast<size_t>(content_len);
+            }
+            const size_t got =
+                stream->readBytes(reinterpret_cast<uint8_t*>(body_out), want);
+            body_out[got] = '\0';
+        }
     }
     http.end();
 

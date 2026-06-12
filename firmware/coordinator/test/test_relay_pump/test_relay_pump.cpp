@@ -62,11 +62,22 @@ void test_double_on_keeps_state_on(void) {
     TEST_ASSERT_EQUAL(writes_after_ctor + 2, gpio.write_calls);
 }
 
+void test_lock_de_energises_and_latches(void) {
+    FakeGpio gpio;
+    RelayPump pump{gpio, 18};
+    (void)pump.turnOn();
+    TEST_ASSERT_EQUAL(static_cast<int>(ErrorCode::Ok), static_cast<int>(pump.lock()));
+    TEST_ASSERT_EQUAL(0 /*LOW*/, gpio.last_value);  // relay de-energised
+    TEST_ASSERT_EQUAL(static_cast<int>(PumpState::SafetyLocked),
+                      static_cast<int>(pump.state()));
+}
+
 int main(int, char**) {
     UNITY_BEGIN();
     RUN_TEST(test_constructor_forces_safe_low);
     RUN_TEST(test_turn_on_sets_high);
     RUN_TEST(test_turn_off_sets_low);
     RUN_TEST(test_double_on_keeps_state_on);
+    RUN_TEST(test_lock_de_energises_and_latches);
     return UNITY_END();
 }

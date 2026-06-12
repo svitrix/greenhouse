@@ -15,6 +15,8 @@ gh::domain::ErrorCode NvsNodeAliasStore::setAlias(
 {
     if (!opened_)                                  return gh::domain::ErrorCode::SensorNotReady;
     if (a.size() > gh::domain::kMaxAliasBytes)     return gh::domain::ErrorCode::AliasTooLong;
+    // Reject control chars / malformed UTF-8 before it can reach the SPA.
+    if (!gh::domain::isValidAlias(a))              return gh::domain::ErrorCode::InvalidArgument;
     const auto key = id.toHex16();
     if (prefs_.putBytes(key.data(), a.data(), a.size()) != a.size()) {
         return gh::domain::ErrorCode::ConfigStoreFailed;

@@ -78,6 +78,27 @@ void test_forget_removes_node(void) {
     TEST_ASSERT_FALSE(reg.snapshot(NodeId{0xA}).has_value());
 }
 
+void test_eviction_picks_oldest_offline_lru(void) {
+    InMemoryNodeRegistry reg;
+    for (uint64_t i = 1; i <= 8; ++i) {
+        (void)reg.recordPresence(NodeId{i}, static_cast<uint16_t>(i), 0x01, 1);
+    }
+    // Two offline nodes; node 5 is the least-recently-seen, node 2 newer.
+    reg.recordSample(NodeId{2}, ChannelSample{SensorKind::Air,
+        Quantity::AirTempC, 1.0f, 5'000});
+    reg.recordSample(NodeId{5}, ChannelSample{SensorKind::Air,
+        Quantity::AirTempC, 1.0f, 1'000});
+    reg.markOffline(NodeId{2});
+    reg.markOffline(NodeId{5});
+
+    TEST_ASSERT_EQUAL(ErrorCode::Ok,
+                      reg.recordPresence(NodeId{9}, 0x99, 0x01, 1));
+    // Oldest last_seen_ms (node 5) is evicted; node 2 survives.
+    TEST_ASSERT_FALSE(reg.snapshot(NodeId{5}).has_value());
+    TEST_ASSERT_TRUE (reg.snapshot(NodeId{2}).has_value());
+    TEST_ASSERT_TRUE (reg.snapshot(NodeId{9}).has_value());
+}
+
 void setUp() {}
 void tearDown() {}
 
@@ -89,5 +110,6 @@ int main(int, char**) {
     RUN_TEST(test_capacity_cap_with_offline_eviction);
     RUN_TEST(test_capacity_cap_no_offline_returns_bounded);
     RUN_TEST(test_forget_removes_node);
+    RUN_TEST(test_eviction_picks_oldest_offline_lru);
     return UNITY_END();
 }

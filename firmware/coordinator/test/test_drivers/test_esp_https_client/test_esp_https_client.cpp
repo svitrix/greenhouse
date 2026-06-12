@@ -9,7 +9,9 @@ using namespace gh::infra;
 using namespace gh::domain;
 
 void test_post_returns_200_on_known_endpoint() {
-    EspHttpsClient client;  // setInsecure() — local dev backend
+    // Local dev backend: no pinned CA, explicit dev-insecure (tolerates a
+    // self-signed cert or a plain-http hub). Production wires a real CA.
+    EspHttpsClient client{/*ca_cert_pem=*/nullptr, /*allow_insecure_dev=*/true};
     const char* body =
         "{\"device_id\":\"gh-hwtest\",\"fw_version\":\"0.1.0\","
         "\"batch_id\":\"hw-1\","

@@ -136,6 +136,18 @@ static esp_err_t zb_action_handler(
     const uint16_t addr     = msg->src_address.u.short_addr;
     constexpr int8_t kRssiUnknown = 0;   // SDK does not expose per-frame RSSI.
 
+    // Resolve the frame's APS source IEEE from the stack's address map. This is
+    // the cross-check the router uses against the short_addr→IEEE binding to
+    // reject spoofed reports (a rogue node claiming another node's short_addr).
+    // 0 = unresolved → the router drops the frame as unverifiable.
+    uint64_t source_ieee = 0;
+    {
+        uint8_t ieee_le[8] = {};
+        if (esp_zb_ieee_address_by_short(addr, ieee_le) == ESP_OK) {
+            source_ieee = ieee_le_to_u64(ieee_le);
+        }
+    }
+
     // Track sender so we can write the desired report period once. On first
     // sight this session, (re)seed the short_addr→IEEE binding from the stack's
     // address map. Without this, after a warm reboot (network restored from
@@ -143,11 +155,8 @@ static esp_err_t zb_action_handler(
     // end-device that never re-announces would be dropped by the router as
     // "unknown short_addr". The stack keeps the mapping in its NVRAM, so we
     // recover it here. Idempotent — onDeviceAnnounced de-dups by IEEE.
-    if (noteSensorReport(addr)) {
-        uint8_t ieee_le[8] = {};
-        if (esp_zb_ieee_address_by_short(addr, ieee_le) == ESP_OK) {
-            s_sink->onDeviceAnnounced(addr, ieee_le_to_u64(ieee_le));
-        }
+    if (noteSensorReport(addr) && source_ieee != 0) {
+        s_sink->onDeviceAnnounced(addr, source_ieee);
     }
 
     // EP1 Basic 0xF001 — sensors_present_mask (uint32)
@@ -158,7 +167,8 @@ static esp_err_t zb_action_handler(
         msg->attribute.data.size >= 4)
     {
         const uint32_t mask = read_attr<uint32_t>(msg->attribute.data.value);
-        s_sink->onPresenceFrame(addr, mask, /*proto_version*/ 0, kRssiUnknown);
+        s_sink->onPresenceFrame(addr, source_ieee, mask,
+                                /*proto_version*/ 0, kRssiUnknown);
         return ESP_OK;
     }
 
@@ -170,7 +180,7 @@ static esp_err_t zb_action_handler(
         msg->attribute.data.size >= 2)
     {
         const uint16_t pv = read_attr<uint16_t>(msg->attribute.data.value);
-        s_sink->onPresenceFrame(addr, /*mask*/ 0, pv, kRssiUnknown);
+        s_sink->onPresenceFrame(addr, source_ieee, /*mask*/ 0, pv, kRssiUnknown);
         return ESP_OK;
     }
 
@@ -182,6 +192,7 @@ static esp_err_t zb_action_handler(
     if (dec.has_value()) {
         s_sink->onChannelSample(
             addr,
+            source_ieee,
             gh::domain::ChannelSample{
                 dec->kind,
                 dec->quantity,
@@ -358,7 +369,10 @@ ZigbeeCoordinatorAdapter::openPermitJoin(uint16_t duration_s) noexcept {
 bool ZigbeeCoordinatorAdapter::isPermitJoinOpen() const noexcept {
     const uint32_t until =
         s_permit_join_until_ms.load(std::memory_order_acquire);
-    return until != 0U && millis() < until;
+    // Wrap-safe deadline compare (millis() rolls over every ~49.7 days).
+    // See MqttClient.cpp for the canonical idiom.
+    return until != 0U &&
+           static_cast<int32_t>(millis() - until) < 0;
 }
 
 uint8_t ZigbeeCoordinatorAdapter::drainPendingPeriodWrites(uint32_t period_s) noexcept {
@@ -421,12 +435,54 @@ static gh::domain::ErrorCode registerSensorClientClusters_(
     return gh::domain::ErrorCode::Ok;
 }
 
+// Build the coordinator EP1 graph (cluster list + endpoint) and register the
+// device. Returns Ok on full success, NetworkDown on any step failure.
+//
+// MEMORY/REBOOT CONTRACT: the esp-zigbee-sdk exposes no public destructor for
+// a cluster/ep list (no esp_zb_*_list_free). A partial-build failure here
+// therefore leaves the SDK allocations unreclaimed AND the stack
+// half-initialised — both are unrecoverable in place. The composition root
+// MUST reboot the device on a NetworkDown return from start(); the reboot
+// reclaims the leaked RAM. This is why allocation only happens after every
+// non-allocating prerequisite (platform config, init, security) has succeeded
+// — so a prerequisite failure cannot leak a list at all.
+static gh::domain::ErrorCode buildAndRegisterSensorEndpoint_() noexcept {
+    esp_zb_cluster_list_t* cluster_list = esp_zb_zcl_cluster_list_create();
+    if (cluster_list == nullptr) {
+        return gh::domain::ErrorCode::NetworkDown;
+    }
+    if (registerSensorClientClusters_(cluster_list) != gh::domain::ErrorCode::Ok) {
+        return gh::domain::ErrorCode::NetworkDown;
+    }
+
+    esp_zb_ep_list_t* ep_list = esp_zb_ep_list_create();
+    if (ep_list == nullptr) {
+        return gh::domain::ErrorCode::NetworkDown;
+    }
+
+    esp_zb_endpoint_config_t ep_cfg{};
+    ep_cfg.endpoint           = 1U;
+    ep_cfg.app_profile_id     = ESP_ZB_AF_HA_PROFILE_ID;
+    ep_cfg.app_device_id      = ESP_ZB_HA_HOME_GATEWAY_DEVICE_ID;
+    ep_cfg.app_device_version = 0U;
+
+    if (esp_zb_ep_list_add_ep(ep_list, cluster_list, ep_cfg) != ESP_OK) {
+        return gh::domain::ErrorCode::NetworkDown;
+    }
+    if (esp_zb_device_register(ep_list) != ESP_OK) {
+        return gh::domain::ErrorCode::NetworkDown;
+    }
+    return gh::domain::ErrorCode::Ok;
+}
+
 gh::domain::ErrorCode
 ZigbeeCoordinatorAdapter::start(uint32_t initial_permit_ms) noexcept {
     // Convert from milliseconds to seconds (SDK uses seconds for permit-join).
     s_permit_join_s = initial_permit_ms / 1000U;
 
     // 1. Platform config — native 802.15.4 radio, no host connection.
+    //    Validated BEFORE any SDK list allocation so a platform/init failure
+    //    cannot leak a cluster/ep list.
     esp_zb_platform_config_t platform_config{};
     platform_config.radio_config.radio_mode = ZB_RADIO_MODE_NATIVE;
     platform_config.host_config.host_connection_mode =
@@ -435,7 +491,9 @@ ZigbeeCoordinatorAdapter::start(uint32_t initial_permit_ms) noexcept {
         return gh::domain::ErrorCode::NetworkDown;
     }
 
-    // 2. Zigbee stack config — Coordinator role.
+    // 2. Zigbee stack config — Coordinator role. esp_zb_init() returns void in
+    //    the SDK (no status to check); a failure inside surfaces later as a
+    //    platform-config / device-register error, which we do check.
     esp_zb_cfg_t cfg{};
     cfg.esp_zb_role         = ESP_ZB_DEVICE_TYPE_COORDINATOR;
     cfg.install_code_policy = false;
@@ -457,26 +515,10 @@ ZigbeeCoordinatorAdapter::start(uint32_t initial_permit_ms) noexcept {
     esp_zb_secur_link_key_exchange_required_set(true);
     esp_zb_secur_network_min_join_lqi_set(gh::protocol::kZigbeeMinJoinLqi);
 
-    // 3. Register coordinator EP1 with client clusters for sensor reports.
-    esp_zb_cluster_list_t* cluster_list = esp_zb_zcl_cluster_list_create();
-    if (cluster_list == nullptr) {
-        return gh::domain::ErrorCode::NetworkDown;
-    }
-    if (registerSensorClientClusters_(cluster_list) != gh::domain::ErrorCode::Ok) {
-        return gh::domain::ErrorCode::NetworkDown;
-    }
-    esp_zb_ep_list_t*      ep_list      = esp_zb_ep_list_create();
-
-    esp_zb_endpoint_config_t ep_cfg{};
-    ep_cfg.endpoint           = 1U;
-    ep_cfg.app_profile_id     = ESP_ZB_AF_HA_PROFILE_ID;
-    ep_cfg.app_device_id      = ESP_ZB_HA_HOME_GATEWAY_DEVICE_ID;
-    ep_cfg.app_device_version = 0U;
-
-    if (esp_zb_ep_list_add_ep(ep_list, cluster_list, ep_cfg) != ESP_OK) {
-        return gh::domain::ErrorCode::NetworkDown;
-    }
-    if (esp_zb_device_register(ep_list) != ESP_OK) {
+    // 3. Build + register coordinator EP1. On failure the helper frees its own
+    //    allocations; the half-initialised stack is unrecoverable in place —
+    //    the composition root must reboot the device on a NetworkDown return.
+    if (buildAndRegisterSensorEndpoint_() != gh::domain::ErrorCode::Ok) {
         return gh::domain::ErrorCode::NetworkDown;
     }
 

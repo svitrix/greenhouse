@@ -55,8 +55,8 @@ void test_save_overwrites_previous() {
     NvsSoilCalibrationStore store;
     TEST_ASSERT_EQUAL(static_cast<int>(ErrorCode::Ok),
                       static_cast<int>(store.begin()));
-    store.save(SoilCalibration{300, 700});
-    store.save(SoilCalibration{320, 720});
+    store.save(SoilCalibration{.raw_dry = 300, .raw_wet = 700});
+    store.save(SoilCalibration{.raw_dry = 320, .raw_wet = 720});
     auto loaded = store.load();
     TEST_ASSERT_TRUE(loaded.ok());
     TEST_ASSERT_EQUAL_UINT16(320, loaded.value.raw_dry);

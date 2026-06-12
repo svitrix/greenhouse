@@ -1,13 +1,12 @@
 #include "ZigbeeReportRouter.hpp"
 #include "AnalyticsUploader.hpp"
 #include "telemetry/ChannelToTelemetryMapper.hpp"
-#include "network/ZigbeeBindingTable.hpp"
 
 namespace gh::app {
 
 ZigbeeReportRouter::ZigbeeReportRouter(
     gh::domain::INodeRegistry& reg, gh::domain::INodeHistoryStore& hist,
-    gh::infra::ZigbeeBindingTable& bind, gh::domain::ILogger& log) noexcept
+    gh::domain::IShortAddrResolver& bind, gh::domain::ILogger& log) noexcept
     : reg_{reg}, hist_{hist}, bind_{bind}, log_{log} {}
 
 void ZigbeeReportRouter::setAnalyticsBridge(
@@ -15,6 +14,25 @@ void ZigbeeReportRouter::setAnalyticsBridge(
 {
     uploader_   = uploader;
     wall_clock_ = wall_clock_ms;
+}
+
+std::optional<gh::domain::NodeId>
+ZigbeeReportRouter::verifiedNode_(uint16_t short_addr, uint64_t source_ieee,
+                                  const char* ctx) noexcept
+{
+    auto id = bind_.resolve(short_addr);
+    if (!id) {
+        log_.warn("zb_router", ctx);
+        return std::nullopt;
+    }
+    // Reject reports whose APS source IEEE does not match the IEEE bound to
+    // this short_addr (spoofed short_addr → quorum/cloud poisoning). A frame
+    // with an unknown source IEEE (0) is treated as unverifiable and dropped.
+    if (source_ieee == 0 || source_ieee != id->ieee) {
+        log_.warn("zb_router", "report IEEE mismatch — dropped (spoof guard)");
+        return std::nullopt;
+    }
+    return id;
 }
 
 void ZigbeeReportRouter::onDeviceAnnounced(
@@ -33,12 +51,12 @@ void ZigbeeReportRouter::onDeviceLeft(uint16_t short_addr) noexcept {
 }
 
 void ZigbeeReportRouter::onPresenceFrame(
-    uint16_t short_addr, uint32_t mask,
+    uint16_t short_addr, uint64_t source_ieee, uint32_t mask,
     uint16_t proto_version, int8_t rssi) noexcept
 {
-    auto id = bind_.resolve(short_addr);
+    auto id = verifiedNode_(short_addr, source_ieee,
+                            "presence for unknown short_addr");
     if (!id) {
-        log_.warn("zb_router", "presence for unknown short_addr");
         return;
     }
     if (mask != 0 || proto_version != 0) {
@@ -48,11 +66,12 @@ void ZigbeeReportRouter::onPresenceFrame(
 }
 
 void ZigbeeReportRouter::onChannelSample(
-    uint16_t short_addr, gh::domain::ChannelSample s, int8_t rssi) noexcept
+    uint16_t short_addr, uint64_t source_ieee,
+    gh::domain::ChannelSample s, int8_t rssi) noexcept
 {
-    auto id = bind_.resolve(short_addr);
+    auto id = verifiedNode_(short_addr, source_ieee,
+                            "sample for unknown short_addr");
     if (!id) {
-        log_.warn("zb_router", "sample for unknown short_addr");
         return;
     }
     reg_.recordSample(*id, s);

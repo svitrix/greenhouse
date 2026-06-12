@@ -1,5 +1,6 @@
 #include <unity.h>
 #include <ArduinoJson.h>
+#include <string>
 #include "NodeViewBuilder.hpp"
 #include "fakes/InMemoryAliasStore.hpp"
 
@@ -58,6 +59,31 @@ void test_node_view_without_alias_is_null(void) {
     TEST_ASSERT_TRUE(root["alias"].isNull());
 }
 
+// Regression: build() formats `ieee` / `short_addr` / `present_mask` from
+// stack-locals that die when build() returns. Those strings must survive into a
+// serializeJson() call made *after* build()'s scope ends — i.e. they must be
+// copied into the document pool, not stored by reference.
+void test_node_view_strings_survive_builder_scope(void) {
+    InMemoryAliasStore aliases;
+    JsonDocument doc;
+    JsonObject root = doc.to<JsonObject>();
+    {
+        const NodeSnapshot snap = snapshotWithAir(/*now*/ 100'000);
+        NodeViewBuilder::build(snap, aliases, /*now_ms*/ 100'000, root);
+        // snap and build()'s internal char[] / toHex16 buffers die here.
+    }
+    // Clobber the stack build() just used, to surface any dangling reference.
+    volatile char scratch[64];
+    for (auto& c : scratch) c = static_cast<char>(0xAB);
+    (void)scratch;
+
+    std::string out;
+    serializeJson(doc, out);
+    TEST_ASSERT_NOT_EQUAL(std::string::npos, out.find("\"00124B001A2B3C4D\""));
+    TEST_ASSERT_NOT_EQUAL(std::string::npos, out.find("\"0x1A2B\""));
+    TEST_ASSERT_NOT_EQUAL(std::string::npos, out.find("\"0x07\""));
+}
+
 void setUp() {}
 void tearDown() {}
 
@@ -65,5 +91,6 @@ int main(int, char**) {
     UNITY_BEGIN();
     RUN_TEST(test_node_view_contains_required_fields);
     RUN_TEST(test_node_view_without_alias_is_null);
+    RUN_TEST(test_node_view_strings_survive_builder_scope);
     return UNITY_END();
 }

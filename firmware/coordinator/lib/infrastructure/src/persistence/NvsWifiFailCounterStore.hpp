@@ -12,8 +12,12 @@ public:
     [[nodiscard]] gh::domain::ErrorCode reset()    noexcept override;
 
 private:
-    static constexpr const char* kNs  = "wifi";
-    static constexpr const char* kKey = "fail_count";
+    // Own namespace per the persistence spec (was multiplexed under "wifi").
+    // Migration: the old "wifi"/"fail_count" value is intentionally NOT carried
+    // over — this is a transient boot-failure budget, so a one-time reset on
+    // upgrade is harmless and avoids a fragile cross-namespace reader.
+    static constexpr const char* kNs  = "wifi_fail";
+    static constexpr const char* kKey = "count";
 };
 
 }  // namespace gh::infra

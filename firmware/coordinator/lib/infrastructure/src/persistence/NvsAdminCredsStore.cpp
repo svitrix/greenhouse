@@ -13,6 +13,9 @@ gh::domain::Result<gh::domain::AdminCreds> NvsAdminCredsStore::load() noexcept {
     const size_t n_user = p.getString(kKeyUser, c.username, sizeof(c.username));
     const size_t n_hash = p.getBytes(kKeyHash, c.password_hash, gh::domain::AdminCreds::kHashLen);
     const size_t n_salt = p.getBytes(kKeySalt, c.salt,          gh::domain::AdminCreds::kSaltLen);
+    // Absent on legacy records -> defaults to 0 (kLegacySingleSha), so an old
+    // single-SHA hash still verifies and is upgraded to PBKDF2 on next login.
+    c.iterations = p.getUInt(kKeyIter, gh::domain::AdminCreds::kLegacySingleSha);
     p.end();
 
     if (n_user == 0 || n_hash != gh::domain::AdminCreds::kHashLen
@@ -31,10 +34,12 @@ gh::domain::ErrorCode NvsAdminCredsStore::save(const gh::domain::AdminCreds& c) 
     const size_t nu = p.putString(kKeyUser, c.username);
     const size_t nh = p.putBytes(kKeyHash, c.password_hash, gh::domain::AdminCreds::kHashLen);
     const size_t ns = p.putBytes(kKeySalt, c.salt,          gh::domain::AdminCreds::kSaltLen);
+    const size_t ni = p.putUInt(kKeyIter, c.iterations);
     p.end();
 
     if (nu == 0 || nh != gh::domain::AdminCreds::kHashLen
-                 || ns != gh::domain::AdminCreds::kSaltLen) {
+                 || ns != gh::domain::AdminCreds::kSaltLen
+                 || ni != sizeof(c.iterations)) {
         return gh::domain::ErrorCode::ConfigStoreFailed;
     }
     return gh::domain::ErrorCode::Ok;

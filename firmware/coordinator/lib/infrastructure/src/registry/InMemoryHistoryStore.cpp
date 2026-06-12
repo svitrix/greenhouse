@@ -6,6 +6,7 @@ void InMemoryHistoryStore::recordPoint(
     gh::domain::NodeId node, gh::domain::SensorKind kind,
     gh::protocol::Quantity q, Point p) noexcept
 {
+    LockGuard lock{mutex_};
     const Key key{node, kind, q};
     auto it = series_.find(key);
     if (it == series_.end()) {
@@ -24,6 +25,7 @@ void InMemoryHistoryStore::recordPoint(
 }
 
 void InMemoryHistoryStore::forgetNode(gh::domain::NodeId node) noexcept {
+    LockGuard lock{mutex_};
     for (auto it = series_.begin(); it != series_.end();) {
         if (it->first.node == node) it = series_.erase(it);
         else ++it;
@@ -35,6 +37,7 @@ InMemoryHistoryStore::query(
     gh::domain::NodeId node, gh::domain::SensorKind kind,
     gh::protocol::Quantity q, uint32_t since) const noexcept
 {
+    LockGuard lock{mutex_};
     etl::vector<Point, gh::domain::kHistoryMaxPointsPerSeries> out;
     auto it = series_.find(Key{node, kind, q});
     if (it == series_.end()) return out;

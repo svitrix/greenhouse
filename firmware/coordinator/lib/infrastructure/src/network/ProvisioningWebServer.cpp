@@ -240,7 +240,8 @@ void ProvisioningWebServer::start() noexcept {
         std::strncpy(ac.username, user_src, gh::domain::AdminCreds::kUsernameMax);
         ac.username[gh::domain::AdminCreds::kUsernameMax] = '\0';
         gh::infra::generateSalt(ac.salt);
-        gh::infra::hashPassword(admin_pass, ac.salt, ac.password_hash);
+        ac.iterations = gh::infra::kPbkdf2DefaultIterations;
+        gh::infra::hashPassword(admin_pass, ac.salt, ac.iterations, ac.password_hash);
 
         if (admin_creds_.save(ac) != gh::domain::ErrorCode::Ok) {
             req->send(500, "text/html",

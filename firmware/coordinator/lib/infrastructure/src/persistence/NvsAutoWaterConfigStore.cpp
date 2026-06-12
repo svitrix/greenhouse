@@ -32,14 +32,19 @@ NvsAutoWaterConfigStore::save(gh::domain::AutoWaterConfig cfg) noexcept {
     if (!p.begin(kNs, /*readOnly=*/false)) {
         return gh::domain::ErrorCode::ConfigStoreFailed;
     }
-    p.putBool  (kEnabled,  cfg.enabled);
-    p.putUChar (kTrigger,  cfg.trigger_below_pct);
-    p.putUShort(kInterval, cfg.min_interval_min);
-    p.putUChar (kDuration, cfg.duration_s);
-    p.putUChar (kMinFresh, cfg.min_fresh_sources);
-    p.putULong (kStaleS,   cfg.stale_threshold_s);
+    // Every putXxx returns the byte count written (0 == failure). A partial
+    // write would leave the config inconsistent, so treat any zero as a store
+    // failure rather than silently persisting half the record.
+    bool ok = true;
+    ok &= p.putBool  (kEnabled,  cfg.enabled)            != 0;
+    ok &= p.putUChar (kTrigger,  cfg.trigger_below_pct)  != 0;
+    ok &= p.putUShort(kInterval, cfg.min_interval_min)   != 0;
+    ok &= p.putUChar (kDuration, cfg.duration_s)         != 0;
+    ok &= p.putUChar (kMinFresh, cfg.min_fresh_sources)  != 0;
+    ok &= p.putULong (kStaleS,   cfg.stale_threshold_s)  != 0;
     p.end();
-    return gh::domain::ErrorCode::Ok;
+    return ok ? gh::domain::ErrorCode::Ok
+              : gh::domain::ErrorCode::ConfigStoreFailed;
 }
 
 }

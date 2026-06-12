@@ -8,15 +8,13 @@ namespace gh::presentation {
 
 class RestAutoWaterRoutes {
 public:
-    RestAutoWaterRoutes(gh::app::IrrigationService&  irrigation,
-                          AsyncAuthenticationMiddleware& auth) noexcept
-        : irrigation_{irrigation}, auth_{auth} {}
+    explicit RestAutoWaterRoutes(gh::app::IrrigationService& irrigation) noexcept
+        : irrigation_{irrigation} {}
 
     void registerOn(AsyncWebServer&) noexcept;
 
 private:
     gh::app::IrrigationService&  irrigation_;
-    AsyncAuthenticationMiddleware& auth_;
 };
 
 }  // namespace gh::presentation
