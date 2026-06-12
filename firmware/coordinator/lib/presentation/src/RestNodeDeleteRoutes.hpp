@@ -14,9 +14,8 @@ public:
     RestNodeDeleteRoutes(gh::domain::INodeRegistry&     reg,
                          gh::domain::INodeAliasStore&   aliases,
                          gh::domain::INodeHistoryStore& hist,
-                         gh::domain::IZigbeeNetwork&    zb,
-                         AsyncAuthenticationMiddleware& auth) noexcept
-        : reg_{reg}, aliases_{aliases}, hist_{hist}, zb_{zb}, auth_{auth} {}
+                         gh::domain::IZigbeeNetwork&    zb) noexcept
+        : reg_{reg}, aliases_{aliases}, hist_{hist}, zb_{zb} {}
 
     void registerOn(AsyncWebServer& server) noexcept;
 
@@ -25,7 +24,6 @@ private:
     gh::domain::INodeAliasStore&   aliases_;
     gh::domain::INodeHistoryStore& hist_;
     gh::domain::IZigbeeNetwork&    zb_;
-    AsyncAuthenticationMiddleware& auth_;
 };
 
 }  // namespace gh::presentation

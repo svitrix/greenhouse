@@ -12,9 +12,8 @@ class RestNodesRoutes {
 public:
     RestNodesRoutes(gh::domain::INodeRegistry&     reg,
                     gh::domain::INodeAliasStore&   aliases,
-                    gh::domain::IClock&            clock,
-                    AsyncAuthenticationMiddleware& auth) noexcept
-        : reg_{reg}, aliases_{aliases}, clock_{clock}, auth_{auth} {}
+                    gh::domain::IClock&            clock) noexcept
+        : reg_{reg}, aliases_{aliases}, clock_{clock} {}
 
     void registerOn(AsyncWebServer& server) noexcept;
 
@@ -22,7 +21,6 @@ private:
     gh::domain::INodeRegistry&     reg_;
     gh::domain::INodeAliasStore&   aliases_;
     gh::domain::IClock&            clock_;
-    AsyncAuthenticationMiddleware& auth_;
 };
 
 }  // namespace gh::presentation

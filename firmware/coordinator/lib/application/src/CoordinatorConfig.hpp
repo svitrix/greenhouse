@@ -21,6 +21,8 @@ struct CoordinatorConfig {
     // middleware in RestApi::start().
     static constexpr uint16_t kAuthRateLimitMaxRequests = 5;
     static constexpr uint32_t kAuthRateLimitWindowMs    = 10'000;
+    // AsyncRateLimitMiddleware::setWindowSize() takes seconds.
+    static constexpr uint32_t kAuthRateLimitWindowS     = kAuthRateLimitWindowMs / 1000U;
 
     // Analytics uploader (spec 2026-06-01 §3.3, §3.4).
     static constexpr uint32_t kAnalyticsFlushPeriodSDefault = 900;        // 15 min

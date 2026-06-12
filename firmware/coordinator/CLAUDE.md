@@ -325,6 +325,16 @@ namespace `admin`. Plaintext password is never persisted.
 After reboot, opening `http://greenhouse.local/` triggers a browser
 sign-in popup ("Sign in to Greenhouse Admin").
 
+Auth + rate-limit are installed as **server-global** middleware in
+`runOperational()` (`server.addMiddleware(&rateLimit)` then
+`server.addMiddleware(&basicAuth)`), so **every** handler is protected —
+the `Rest*Routes`, the combined `/api/dashboard` payload, the
+`/api/events` SSE source and the `serveStatic("/")` SPA fallback. A
+request to any of these without a valid `Authorization` header returns
+401; more than 5 attempts / 10 s per IP returns 429. The route classes
+no longer attach per-route middleware (that would double the SHA-256
+verify).
+
 **To change admin credentials:** hold BOOT for 3 s on reboot → captive
 AP appears → fill the same form with a new admin password. Old
 credentials stop working immediately.

@@ -1,17 +1,24 @@
 #ifdef ARDUINO
 
 #include "RestHistoryRoutes.hpp"
+#include "RestHelpers.hpp"
 #include "JsonHelpers.hpp"
 #include <ArduinoJson.h>
 
 namespace gh::presentation {
+
+namespace {
+constexpr uint32_t kHistoryMinHours    = 1;
+constexpr uint32_t kHistoryMaxHours    = 24;
+constexpr uint32_t kMsPerHour          = 60u * 60u * 1000u;
+}  // namespace
 
 void RestHistoryRoutes::registerOn(AsyncWebServer& server) noexcept {
     server.on("/api/history", HTTP_GET,
         [this](AsyncWebServerRequest* req) {
             if (!req->hasParam("ieee") || !req->hasParam("kind") ||
                 !req->hasParam("quantity") || !req->hasParam("hours")) {
-                req->send(400, "application/json", "{\"error\":\"missing_query\"}");
+                rest::sendError(req, 400, "missing_query", "ieee/kind/quantity/hours required");
                 return;
             }
             const auto id    = gh::domain::NodeId::parseHex16(
@@ -20,14 +27,17 @@ void RestHistoryRoutes::registerOn(AsyncWebServer& server) noexcept {
             const auto qty   = quantityFromCode(req->getParam("quantity")->value().c_str());
             const auto hours = static_cast<uint32_t>(
                 req->getParam("hours")->value().toInt());
-            if (!id || !kind || !qty || hours < 1 || hours > 24) {
-                req->send(400, "application/json", "{\"error\":\"bad_query\"}");
+            if (!id || !kind || !qty ||
+                hours < kHistoryMinHours || hours > kHistoryMaxHours) {
+                rest::sendError(req, 400, "bad_query", "invalid query parameters");
                 return;
             }
-            const uint32_t since = clock_.nowMs() - hours * 60u * 60u * 1000u;
+            const uint32_t since = clock_.nowMs() - hours * kMsPerHour;
             const auto pts = hist_.query(*id, *kind, *qty, since);
 
+            // Variable-length series — stream it instead of one large stack buf.
             auto* resp = req->beginResponseStream("application/json");
+            resp->addHeader("Cache-Control", "no-store");
             resp->print("{\"data\":[");
             for (size_t i = 0; i < pts.size(); ++i) {
                 if (i > 0) resp->print(',');
@@ -38,7 +48,7 @@ void RestHistoryRoutes::registerOn(AsyncWebServer& server) noexcept {
             }
             resp->print("]}");
             req->send(resp);
-        }).addMiddleware(&auth_);
+        });
 }
 
 }  // namespace gh::presentation

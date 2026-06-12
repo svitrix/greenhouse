@@ -4,22 +4,22 @@
 #include <ESPAsyncWebServer.h>
 #include "irrigation/IrrigationService.hpp"
 #include "ports/IPump.hpp"
+#include "RestHelpers.hpp"
 
 namespace gh::presentation {
 
 class RestPumpRoutes {
 public:
     RestPumpRoutes(gh::app::IrrigationService&  irrigation,
-                     gh::domain::IPump&             pump,
-                     AsyncAuthenticationMiddleware& auth) noexcept
-        : irrigation_{irrigation}, pump_{pump}, auth_{auth} {}
+                     gh::domain::IPump&             pump) noexcept
+        : irrigation_{irrigation}, pump_{pump} {}
 
     void registerOn(AsyncWebServer&) noexcept;
 
 private:
     gh::app::IrrigationService&  irrigation_;
     gh::domain::IPump&             pump_;
-    AsyncAuthenticationMiddleware& auth_;
+    char                           body_buf_[rest::kMaxBodyBytes] = {};
 };
 
 }  // namespace gh::presentation

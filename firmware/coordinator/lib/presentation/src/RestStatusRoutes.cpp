@@ -19,6 +19,7 @@ void RestStatusRoutes::registerOn(AsyncWebServer& server) noexcept {
             }
 
             auto* resp = req->beginResponseStream("application/json");
+            resp->addHeader("Cache-Control", "no-store");
             JsonDocument doc;
             doc["device_id"]         = device_id_;
             doc["name"]              = device_id_;
@@ -31,7 +32,7 @@ void RestStatusRoutes::registerOn(AsyncWebServer& server) noexcept {
             doc["node_count_total"]  = total;
             serializeJson(doc, *resp);
             req->send(resp);
-        }).addMiddleware(&auth_);
+        });
 }
 
 }  // namespace gh::presentation

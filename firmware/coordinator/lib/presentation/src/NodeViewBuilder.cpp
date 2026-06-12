@@ -22,11 +22,15 @@ void NodeViewBuilder::build(const gh::domain::NodeSnapshot& snap,
                              uint32_t now_ms, JsonObject out) noexcept
 {
     const auto hex = snap.id.toHex16();
-    out["ieee"] = hex.data();
+    // `hex` is a stack-local whose backing array is freed when build() returns,
+    // but serializeJson() runs in the caller afterwards. ArduinoJson v7 stores a
+    // bare `const char*` by reference (UAF); JsonString (default isStatic=false)
+    // forces a copy into the document pool.
+    out["ieee"] = JsonString(hex.data());
 
     char short_buf[8];
     std::snprintf(short_buf, sizeof(short_buf), "0x%04X", snap.short_addr);
-    out["short_addr"] = short_buf;
+    out["short_addr"] = JsonString(short_buf);
 
     auto a = aliases.alias(snap.id);
     if (a.has_value()) out["alias"] = a->data();
@@ -41,7 +45,7 @@ void NodeViewBuilder::build(const gh::domain::NodeSnapshot& snap,
     char mask_buf[8];
     std::snprintf(mask_buf, sizeof(mask_buf), "0x%02X",
                    static_cast<unsigned>(snap.present_mask & 0xFFu));
-    out["present_mask"] = mask_buf;
+    out["present_mask"] = JsonString(mask_buf);
 
     JsonArray readings = out["readings"].to<JsonArray>();
     for (const auto& s : snap.samples) {

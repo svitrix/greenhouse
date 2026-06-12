@@ -407,7 +407,14 @@ void runOperational(gh::infra::SerialLogger&              log,
 #endif
 
     // --- HTTP Basic Auth + REST v2 server ---
+    // Auth + rate-limit are installed as *server-global* middleware so every
+    // handler — including /api/dashboard, the /api/events SSE source and the
+    // serveStatic SPA fallback — is protected by a single auth point. Per-route
+    // .addMiddleware() is intentionally NOT used (it would double-hash).
     static AsyncWebServer server(80);
+    static AsyncRateLimitMiddleware rateLimit;
+    rateLimit.setMaxRequests(gh::coord::CoordinatorConfig::kAuthRateLimitMaxRequests);
+    rateLimit.setWindowSize(gh::coord::CoordinatorConfig::kAuthRateLimitWindowS);
     static AsyncAuthenticationMiddleware basicAuth;
     basicAuth.setAuthType(AsyncAuthType::AUTH_BASIC);
     basicAuth.setRealm("Greenhouse Admin");
@@ -465,15 +472,20 @@ void runOperational(gh::infra::SerialLogger&              log,
             return diff == 0;
         });
 
-    static gh::presentation::RestNodesRoutes        rn_nodes  {node_registry, alias_store, clock, basicAuth};
-    static gh::presentation::RestNodeAliasRoutes    rn_alias  {node_registry, alias_store, basicAuth};
-    static gh::presentation::RestNodeDeleteRoutes   rn_delete {node_registry, alias_store, history_store, zb_net, basicAuth};
-    static gh::presentation::RestHistoryRoutes    rn_hist   {history_store, clock, basicAuth};
-    static gh::presentation::RestPumpRoutes       rn_pump   {irrigation_service, pump, basicAuth};
-    static gh::presentation::RestStatusRoutes     rn_status {node_registry, clock, mqtt, sysinfo, device_id.c_str(), basicAuth};
-    static gh::presentation::RestConfigRoutes     rn_cfg    {auto_water_store, mqttStore, wifiStore, basicAuth};
-    static gh::presentation::RestZigbeeRoutes     rn_zb     {zb_net, basicAuth};
-    static gh::presentation::RestAutoWaterRoutes  rn_aw     {irrigation_service, basicAuth};
+    // Global middleware order: rate-limit first (cheap reject of brute force),
+    // then auth. Applies to every handler registered on `server`.
+    server.addMiddleware(&rateLimit);
+    server.addMiddleware(&basicAuth);
+
+    static gh::presentation::RestNodesRoutes        rn_nodes  {node_registry, alias_store, clock};
+    static gh::presentation::RestNodeAliasRoutes    rn_alias  {node_registry, alias_store};
+    static gh::presentation::RestNodeDeleteRoutes   rn_delete {node_registry, alias_store, history_store, zb_net};
+    static gh::presentation::RestHistoryRoutes    rn_hist   {history_store, clock};
+    static gh::presentation::RestPumpRoutes       rn_pump   {irrigation_service, pump};
+    static gh::presentation::RestStatusRoutes     rn_status {node_registry, clock, mqtt, sysinfo, device_id.c_str()};
+    static gh::presentation::RestConfigRoutes     rn_cfg    {auto_water_store, mqttStore, wifiStore};
+    static gh::presentation::RestZigbeeRoutes     rn_zb     {zb_net};
+    static gh::presentation::RestAutoWaterRoutes  rn_aw     {irrigation_service};
 
     rn_nodes .registerOn(server);
     rn_alias .registerOn(server);

@@ -10,16 +10,14 @@ namespace gh::presentation {
 class RestHistoryRoutes {
 public:
     RestHistoryRoutes(gh::domain::INodeHistoryStore& hist,
-                        gh::domain::IClock&            clock,
-                        AsyncAuthenticationMiddleware& auth) noexcept
-        : hist_{hist}, clock_{clock}, auth_{auth} {}
+                        gh::domain::IClock&            clock) noexcept
+        : hist_{hist}, clock_{clock} {}
 
     void registerOn(AsyncWebServer& server) noexcept;
 
 private:
     gh::domain::INodeHistoryStore& hist_;
     gh::domain::IClock&            clock_;
-    AsyncAuthenticationMiddleware& auth_;
 };
 
 }  // namespace gh::presentation

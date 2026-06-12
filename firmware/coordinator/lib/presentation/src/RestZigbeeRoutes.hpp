@@ -3,20 +3,20 @@
 
 #include <ESPAsyncWebServer.h>
 #include "ports/IZigbeeNetwork.hpp"
+#include "RestHelpers.hpp"
 
 namespace gh::presentation {
 
 class RestZigbeeRoutes {
 public:
-    RestZigbeeRoutes(gh::domain::IZigbeeNetwork&    zb,
-                       AsyncAuthenticationMiddleware& auth) noexcept
-        : zb_{zb}, auth_{auth} {}
+    explicit RestZigbeeRoutes(gh::domain::IZigbeeNetwork& zb) noexcept
+        : zb_{zb} {}
 
     void registerOn(AsyncWebServer&) noexcept;
 
 private:
     gh::domain::IZigbeeNetwork&    zb_;
-    AsyncAuthenticationMiddleware& auth_;
+    char                           body_buf_[rest::kMaxBodyBytes] = {};
 };
 
 }  // namespace gh::presentation
