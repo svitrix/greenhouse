@@ -1,11 +1,17 @@
 #pragma once
 #include <etl/circular_buffer.h>
 #include <etl/flat_map.h>
+#include "concurrency/RecursiveMutex.hpp"
 #include "ports/INodeHistoryStore.hpp"
 #include "ports/INodeRegistry.hpp"
 
 namespace gh::infra {
 
+// Per-(node, channel) ring-buffer history. Synchronisation model mirrors
+// InMemoryNodeRegistry: `recordPoint` / `forgetNode` (Zigbee + prune tasks)
+// insert/erase in the flat_map while `query` (REST task) iterates; every
+// public method holds the recursive mutex so a concurrent insert/erase
+// cannot invalidate an in-flight iteration. No-op lock on the host build.
 class InMemoryHistoryStore final : public gh::domain::INodeHistoryStore {
 public:
     static constexpr uint32_t kWindowMs = 24u * 60u * 60u * 1000u;
@@ -37,6 +43,7 @@ private:
     using Map    = etl::flat_map<Key, Series,
         gh::domain::kMaxRegisteredNodes * 8>;
     Map series_;
+    mutable RecursiveMutex mutex_;
 };
 
 }
