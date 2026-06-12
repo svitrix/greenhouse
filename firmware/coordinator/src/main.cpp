@@ -537,12 +537,26 @@ void runOperational(gh::infra::SerialLogger&              log,
     {
         gh::domain::AnalyticsConfig acfg{};
         const auto load_res = analyticsStore.load(acfg);
-        if (load_res == gh::domain::ErrorCode::Ok && acfg.backend_url[0] != '\0') {
+        const bool url_is_https =
+            (std::strncmp(acfg.backend_url, "https://", 8) == 0);
+        if (load_res == gh::domain::ErrorCode::Ok && acfg.backend_url[0] != '\0'
+            && !url_is_https && !acfg.insecure_tls) {
+            // C2: a plain http:// hub URL would ship the Bearer api_key +
+            // telemetry in cleartext. Refuse to arm the uploader unless the
+            // operator explicitly set the insecure dev flag in NVS.
+            log.error("analytics",
+                      "backend_url is not https:// and insecure_tls=false - disabled");
+        } else if (load_res == gh::domain::ErrorCode::Ok && acfg.backend_url[0] != '\0') {
             static gh::infra::LittleFsTelemetryQueue analytics_queue{};
             if (analytics_queue.begin() != gh::domain::ErrorCode::Ok) {
                 log.warn("analytics", "queue begin failed - disabled");
             } else {
-                static gh::infra::EspHttpsClient analytics_http{};
+                // C1: thread the runtime insecure flag through. With no pinned
+                // CA the client only goes insecure when insecure_tls=true;
+                // otherwise it fails the TLS handshake closed.
+                static gh::infra::EspHttpsClient analytics_http{
+                    /*ca_cert_pem=*/nullptr,
+                    /*allow_insecure_dev=*/acfg.insecure_tls};
 
                 static char        s_device_id_buf[16] = {};
                 std::snprintf(s_device_id_buf, sizeof(s_device_id_buf), "gh-%s",
@@ -626,7 +640,14 @@ void runProvisioning(gh::infra::SerialLogger&              log,
     static gh::infra::CaptiveDnsServer dns{};
     dns.start(ap.softApIP());
 
-    static gh::infra::EspHttpsClient pairing_https{};
+    // Pairing runs inside the captive-portal /save handler — a physically
+    // present, operator-initiated, one-shot flow against a hub the operator
+    // typed by hand (the documented local-dev example is a plain http:// URL,
+    // e.g. http://192.168.1.42:8000/ingest). Allow dev-insecure here so that
+    // flow keeps working; the operational analytics path stays fail-closed by
+    // default (see runAnalytics composition below). No pinned CA at this stage.
+    static gh::infra::EspHttpsClient pairing_https{/*ca_cert_pem=*/nullptr,
+                                                   /*allow_insecure_dev=*/true};
     static gh::infra::EspPairingClient pairing_client{pairing_https};
 
     static gh::infra::ProvisioningWebServer web{

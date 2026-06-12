@@ -11,12 +11,20 @@ namespace gh::infra {
 // satisfying the global "no malloc after init phase" rule (see spec §3.5).
 // HTTPClient itself is stack-scoped per call (small).
 //
-// TLS:
-// - If ca_cert_pem is non-null, pins to that root CA.
-// - Otherwise calls setInsecure() — only use for local dev (spec §4.6).
+// TLS policy (default DENY — remediation C1/C2):
+// - ca_cert_pem non-null  → pins to that root CA (production path).
+// - ca_cert_pem null + allow_insecure_dev=true → setInsecure() and plain-`http://`
+//   tolerated. ONLY for local dev (spec §4.6); api_key + telemetry are exposed to
+//   MITM on the IoT-VLAN.
+// - ca_cert_pem null + allow_insecure_dev=false → every request fails closed with
+//   HttpTransportFailure. There is NO silent insecure fallback.
+//
+// setInsecure()/setCACert() are (re)applied per request BEFORE http.begin(),
+// because WiFiClientSecure latches the verification mode at handshake time.
 class EspHttpsClient final : public gh::domain::IHttpClient {
 public:
-    explicit EspHttpsClient(const char* ca_cert_pem = nullptr) noexcept;
+    explicit EspHttpsClient(const char* ca_cert_pem        = nullptr,
+                            bool        allow_insecure_dev = false) noexcept;
 
     [[nodiscard]] gh::domain::HttpResponse
     postJson(const char* url,
@@ -39,6 +47,16 @@ public:
                      size_t      body_out_size) noexcept;
 
 private:
+    // Validates the URL scheme and applies the per-request TLS verification mode.
+    // On success returns true and sets is_https_out. On a policy violation
+    // (no CA + not dev-insecure, or http:// without the dev flag) returns false
+    // and writes the failure response into fail_out.
+    [[nodiscard]] bool prepareTransport_(const char*               url,
+                                         bool&                     is_https_out,
+                                         gh::domain::HttpResponse& fail_out) noexcept;
+
+    const char* ca_cert_pem_;
+    bool        allow_insecure_dev_;
     WiFiClientSecure secure_;
 };
 
