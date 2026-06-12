@@ -9,7 +9,7 @@ using gh::domain::ErrorCode;
 namespace {
 void clearNamespace() {
     Preferences p;
-    p.begin("system", false);
+    p.begin("prov_flag", false);
     p.clear();
     p.end();
 }

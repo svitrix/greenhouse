@@ -32,6 +32,8 @@ Plus the one-shot upgrade flag namespace owned by `V1MqttPurge`:
 - **Reads return `Result<T>` or `std::optional<T>`** — empty key is not an error, it's "no value yet".
 - **No `String` (Arduino) in stored structs.** Use `char[N]` value-types (e.g. `WifiCreds.ssid[33]`). The fixed sizes are part of the schema; bumping them is a migration.
 - **Schema migrations:** if you change a key's size or rename it, bump the namespace name (`mqtt` → `mqtt_v2`) and ship a one-shot reader for the old one. Do NOT silently change layout in place.
+- **Blitted structs carry a version byte.** `WifiCreds` / `MqttCreds` / `SoilCalibration` are stored via raw `putBytes`/`getBytes` under key `"v1"`. Each has `uint8_t schema_version` as its **first** member, stamped on `save()` and verified on `load()` (`SensorVersionMismatch` on mismatch). A legacy record written before the version byte existed is a different `sizeof` and is rejected as `ConfigNotFound` (re-provision / re-write). `char[]` fields are force-NUL-terminated (`normalizeForStorage()`) on load and `valid()` requires a NUL within bounds — this prevents an over-read in e.g. `WiFi.begin(ssid)` from a corrupt record.
+- **Namespace isolation (E6).** `NvsWifiFailCounterStore` → `wifi_fail`, `NvsLastConnectErrorStore` → `last_err`, `NvsProvisioningFlagStore` → `prov_flag` — each owns its namespace per the file map above (they previously multiplexed `wifi`/`system`). Migration: the old values are intentionally **not** carried over — fail-counter (transient boot budget), last-connect-error (diagnostic), and provisioning-pending (defaults to "not pending") all read back safe defaults on upgrade, so a one-time reset is harmless and avoids a fragile cross-namespace reader.
 
 ## Security (do not skip)
 

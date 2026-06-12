@@ -9,8 +9,8 @@ using gh::domain::ErrorCode;
 namespace {
 void clearNamespace() {
     Preferences p;
-    p.begin("wifi", false);
-    p.remove("fail_count");
+    p.begin("wifi_fail", false);
+    p.remove("count");
     p.end();
 }
 }
