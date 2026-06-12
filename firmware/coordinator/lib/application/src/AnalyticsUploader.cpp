@@ -7,7 +7,7 @@ namespace gh::app {
 using gh::domain::ErrorCode;
 using gh::domain::TelemetryRecord;
 
-// C5: a single worst-case record (long-long ts + raw + headroom) must fit so
+// a single worst-case record (long-long ts + raw + headroom) must fit so
 // buildBody_ can serialise at least one record. ~160 B is generous; the build
 // buffer is 32 KB, so the envelope + many records always fit.
 static_assert(gh::coord::CoordinatorConfig::kAnalyticsBuildBufBytes >= 256,
@@ -28,7 +28,7 @@ void AnalyticsUploader::onReading(const TelemetryRecord& r) noexcept {
 
 bool AnalyticsUploader::backoffElapsed_(uint32_t now_ms) const noexcept {
     const uint32_t period = backoff_ms_ ? backoff_ms_ : cfg_.flush_period_ms;
-    // C4: wrap-safe comparison in uint32_t millis() space — see MqttClient.cpp:45.
+    // wrap-safe comparison in uint32_t millis() space — see MqttClient.cpp:45.
     // The signed difference stays correct across the ~49.7-day rollover.
     const uint32_t next_allowed = last_flush_ms_ + period;
     return static_cast<int32_t>(now_ms - next_allowed) >= 0;
@@ -45,7 +45,7 @@ void AnalyticsUploader::tick() noexcept {
 }
 
 void AnalyticsUploader::flushNow() noexcept {
-    // C6: honour an active backoff so a manual/test trigger cannot hammer a hub
+    // honour an active backoff so a manual/test trigger cannot hammer a hub
     // that asked us to back off. The periodic flush-period gate is still bypassed.
     if (backoff_ms_ != 0 && !backoffElapsed_(clock_.nowMs())) return;
     if (queue_.size() == 0) return;
@@ -54,7 +54,7 @@ void AnalyticsUploader::flushNow() noexcept {
 
 void AnalyticsUploader::doFlush_() noexcept {
     if (in_flush_) {
-        // C6: single-task invariant violated (production: only analytics_task
+        // single-task invariant violated (production: only analytics_task
         // calls this). Refuse to corrupt a build already in progress.
         log_.warn("analytics", "doFlush reentered - skipped");
         return;
@@ -63,7 +63,7 @@ void AnalyticsUploader::doFlush_() noexcept {
 
     size_t n = queue_.peek(scratch_.data(), scratch_.size());
 
-    // C5: serialise the batch; on overflow buildBody_ returns 0. Shrink the
+    // serialise the batch; on overflow buildBody_ returns 0. Shrink the
     // batch (halving) until it fits the buffer rather than stalling forever on
     // an over-large head. A single record that still does not fit is dropped
     // (poison) so the queue can make progress.
@@ -136,7 +136,7 @@ size_t AnalyticsUploader::buildBody_(const TelemetryRecord* records, size_t coun
                                      char* out, size_t cap) noexcept {
     size_t pos       = 0;
     bool   truncated = false;
-    // C5: detect overflow. snprintf returns the length it WOULD have written;
+    // detect overflow. snprintf returns the length it WOULD have written;
     // if that exceeds the remaining space, the JSON is incomplete → fail closed
     // (return 0) so doFlush_ skips the post instead of shipping a broken body.
     auto append = [&](const char* fmt, auto... args) {
@@ -153,7 +153,7 @@ size_t AnalyticsUploader::buildBody_(const TelemetryRecord* records, size_t coun
     for (size_t i = 0; i < count; ++i) {
         const auto& r = records[i];
         if (i > 0) append("%s", ",");
-        // C5: %g on a non-finite float emits bare `nan`/`inf`, which is invalid
+        // %g on a non-finite float emits bare `nan`/`inf`, which is invalid
         // JSON. Render the value token separately — `null` for non-finite so the
         // hub records "no value" instead of choking on a malformed body.
         char value_tok[32];

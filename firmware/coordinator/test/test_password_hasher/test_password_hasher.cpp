@@ -14,7 +14,7 @@ static const uint8_t kSalt0[16] = {
 
 // --- Legacy single SHA-256 (iterations == 0) -------------------------------
 // SHA-256(salt0 || "password"), verified via: printf '...' | shasum -a 256.
-// Kept so pre-remediation records still verify before they are upgraded.
+// Kept so legacy records still verify before they are upgraded.
 static const uint8_t kLegacyHash[32] = {
     0x0a, 0xed, 0xea, 0xd8, 0xd4, 0x1a, 0xb0, 0x48,
     0x2c, 0xd0, 0x93, 0x09, 0x32, 0xbf, 0x93, 0x7b,

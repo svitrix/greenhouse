@@ -10,7 +10,7 @@ namespace gh::infra {
 //   [0]            Header  (magic + version + head + count + CRC32)
 //   [kHeaderBytes] N * kRecordWireBytes serialized records
 //
-// Integrity (E3):
+// Integrity:
 //  - The header carries a magic word, a format version, and a CRC32 over
 //    its own fields. A torn/garbage header fails the CRC check on begin()
 //    and the queue resets to empty instead of returning garbage telemetry.
@@ -21,7 +21,7 @@ namespace gh::infra {
 //    in the header are only published after the record write succeeds, so a
 //    failed record write cannot desync the RAM/flash counters.
 //
-// Authoritative head_/count_ live in RAM (E4); the on-flash header is the
+// Authoritative head_/count_ live in RAM; the on-flash header is the
 // durable mirror, rewritten after each mutation via a single open handle.
 class LittleFsTelemetryQueue final : public gh::domain::ITelemetryQueue {
 public:

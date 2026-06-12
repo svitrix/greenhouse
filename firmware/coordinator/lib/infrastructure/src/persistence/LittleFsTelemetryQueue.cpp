@@ -52,7 +52,7 @@ bool LittleFsTelemetryQueue::ensureFile_() noexcept {
     if (!file_.create()) return false;
 
     // Header first, then sparse-zero the data region in large chunks rather
-    // than 64-byte writes (E3: the old code issued ~3000 syncs on first boot).
+    // than 64-byte writes (the old code issued ~3000 syncs on first boot).
     head_ = 0; count_ = 0;
     if (!writeHeader_()) return false;
 
@@ -137,7 +137,7 @@ ErrorCode LittleFsTelemetryQueue::begin() noexcept {
 
 ErrorCode LittleFsTelemetryQueue::append(const TelemetryRecord& r) noexcept {
     // Compute the would-be state without mutating head_/count_ yet, so a
-    // failed record write leaves the live counters untouched (E3).
+    // failed record write leaves the live counters untouched.
     size_t head = head_;
     size_t count = count_;
     if (count == kMaxRecords) {

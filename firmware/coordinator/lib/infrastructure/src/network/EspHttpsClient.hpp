@@ -11,7 +11,7 @@ namespace gh::infra {
 // satisfying the global "no malloc after init phase" rule (see spec §3.5).
 // HTTPClient itself is stack-scoped per call (small).
 //
-// TLS policy (default DENY — remediation C1/C2):
+// TLS policy (default DENY):
 // - ca_cert_pem non-null  → pins to that root CA (production path).
 // - ca_cert_pem null + allow_insecure_dev=true → setInsecure() and plain-`http://`
 //   tolerated. ONLY for local dev (spec §4.6); api_key + telemetry are exposed to

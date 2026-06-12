@@ -164,7 +164,7 @@ void test_manual_request_off_stops_pump(void) {
     IrrigationService svc{reg, pump, fsw, clock, log, cfg, 20'000};
     (void)svc.requestOn();
     const AutoWaterDecision d = svc.requestOff();
-    TEST_ASSERT_EQUAL(AutoWaterOutcome::Stopped, d.outcome);          // [A5]
+    TEST_ASSERT_EQUAL(AutoWaterOutcome::Stopped, d.outcome);
     TEST_ASSERT_EQUAL_STRING("stop", gh::app::outcomeCode(d.outcome));
     TEST_ASSERT_EQUAL(1, pump.off_calls);
     TEST_ASSERT_EQUAL(gh::domain::PumpState::Off, pump.state());
@@ -202,7 +202,7 @@ static NodeSnapshot makeMultiSoilNode(uint64_t ieee, uint32_t now_ms,
     return s;
 }
 
-// [A1] After a max-runtime cutoff the pump latches SafetyLocked and tick()
+// After a max-runtime cutoff the pump latches SafetyLocked and tick()
 // must NOT re-arm it on the next cycle even with dry soil + water in the tank.
 void test_max_runtime_latches_and_blocks_rearm(void) {
     gh::test::FakeNodeRegistry reg;
@@ -253,7 +253,7 @@ void test_max_runtime_latches_and_blocks_rearm(void) {
     TEST_ASSERT_EQUAL(PumpState::Off, pump.state());
 }
 
-// [A2] Manually started pump with auto-water DISABLED must still get a
+// Manually started pump with auto-water DISABLED must still get a
 // dry-tank cutoff on the next tick (check runs before the cfg_.enabled gate).
 void test_dry_tank_cutoff_while_disabled(void) {
     gh::test::FakeNodeRegistry reg;
@@ -278,7 +278,7 @@ void test_dry_tank_cutoff_while_disabled(void) {
     TEST_ASSERT_EQUAL(1, pump.lock_calls);
 }
 
-// [A4] A node reporting several soil samples counts as ONE vote, and 8 nodes
+// A node reporting several soil samples counts as ONE vote, and 8 nodes
 // each with multiple samples do not overflow the bounded source vectors.
 void test_multi_sample_node_counts_once(void) {
     gh::test::FakeNodeRegistry reg;
@@ -332,7 +332,7 @@ void test_eight_multi_sample_nodes_no_overflow(void) {
     TEST_ASSERT_TRUE(d.fresh_sources.size() <= gh::domain::kMaxRegisteredNodes);
 }
 
-// [A5] First auto-start works even when nowMs()==0 (no sentinel collision).
+// First auto-start works even when nowMs()==0 (no sentinel collision).
 void test_first_autostart_at_time_zero(void) {
     gh::test::FakeNodeRegistry reg;
     gh::test::FakeClock clock;          clock.now_ms = 0;

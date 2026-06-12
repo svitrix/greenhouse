@@ -1,4 +1,4 @@
-// E7: evicting or forgetting a node must also forget its history series,
+// evicting or forgetting a node must also forget its history series,
 // so the bounded history map does not leak orphan series.
 #include <unity.h>
 #include "registry/InMemoryHistoryStore.hpp"

@@ -82,7 +82,7 @@ AutoWaterDecision IrrigationService::tick() noexcept {
 
     // 1. Safety backstop runs unconditionally (before the cfg_.enabled gate)
     //    so a manually-started pump is cut off on a dry tank or max-runtime
-    //    even when auto-water is disabled. [A2/A3]
+    //    even when auto-water is disabled.
     if (enforceSafetyCutoff(d.monotonic_ms)) {
         d.outcome = AutoWaterOutcome::LockMaxRuntime;
         last_ = d;
@@ -90,7 +90,7 @@ AutoWaterDecision IrrigationService::tick() noexcept {
     }
 
     // 2. While safety-locked, auto-water stays gated until an explicit
-    //    requestOff() re-arms the pump. [A1]
+    //    requestOff() re-arms the pump.
     if (pump_.state() == gh::domain::PumpState::SafetyLocked) {
         d.outcome = AutoWaterOutcome::LockMaxRuntime;
         last_ = d;
@@ -165,7 +165,7 @@ AutoWaterDecision IrrigationService::requestOn() noexcept {
     d.monotonic_ms = clock_.nowMs();
 
     // Safety latch gates manual start too — an explicit requestOff() must
-    // re-arm the pump before it can run again. [A1]
+    // re-arm the pump before it can run again.
     if (pump_.state() == gh::domain::PumpState::SafetyLocked) {
         d.outcome = AutoWaterOutcome::LockMaxRuntime;
         last_ = d;
@@ -200,7 +200,7 @@ AutoWaterDecision IrrigationService::requestOff() noexcept {
     d.monotonic_ms = clock_.nowMs();
     d.outcome      = AutoWaterOutcome::Stopped;
     // turnOff() de-energises AND clears any SafetyLocked latch (explicit
-    // operator re-arm). [A1/A5]
+    // operator re-arm).
     (void)pump_.turnOff();
     pump_started_ms_.reset();
     last_ = d;

@@ -13,7 +13,7 @@ struct AdminCreds {
     static constexpr std::size_t kSaltLen     = 16;
 
     // iterations == 0 is the self-describing legacy marker: the record was
-    // written by the pre-remediation firmware as a single SHA-256(salt ||
+    // written by the legacy firmware as a single SHA-256(salt ||
     // password) round. Any non-zero value means PBKDF2-HMAC-SHA256 with that
     // iteration count. Storing the count alongside salt+hash keeps the record
     // self-describing, so the verify path never has to guess the KDF and a

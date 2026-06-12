@@ -18,7 +18,7 @@ bool EspHttpsClient::prepareTransport_(const char*   url,
                                        HttpResponse& fail_out) noexcept {
     is_https_out = (std::strncmp(url, "https://", 8) == 0);
 
-    // C2: a plain http:// URL would leak the Bearer api_key + telemetry in
+    // a plain http:// URL would leak the Bearer api_key + telemetry in
     // cleartext. Refuse it unless the operator opted into dev-insecure mode.
     if (!is_https_out && !allow_insecure_dev_) {
         fail_out = HttpResponse{-1, 0, ErrorCode::HttpTransportFailure};
@@ -29,7 +29,7 @@ bool EspHttpsClient::prepareTransport_(const char*   url,
         if (ca_cert_pem_ != nullptr) {
             secure_.setCACert(ca_cert_pem_);
         } else if (allow_insecure_dev_) {
-            // C1: no pinned CA — accept any cert ONLY in explicit dev mode.
+            // no pinned CA — accept any cert ONLY in explicit dev mode.
             secure_.setInsecure();
         } else {
             // C1 fail-closed: no CA and not dev-insecure → do NOT connect.
@@ -125,7 +125,7 @@ HttpResponse EspHttpsClient::postJsonWithBody(const char* url,
         static_cast<size_t>(body_len)
     );
 
-    // C3: read the response into the caller's fixed buffer via a bounded
+    // read the response into the caller's fixed buffer via a bounded
     // stream read instead of http.getString() (which heap-allocates an
     // unbounded Arduino String from an attacker/buggy-hub-controlled body).
     // Cap at the smaller of the caller buffer and a known Content-Length so a

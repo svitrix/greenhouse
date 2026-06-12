@@ -12,7 +12,7 @@
 //     bit-exact PBKDF2 oracle for unit tests; production firmware always runs
 //     mbedTLS.
 //
-// SECURITY INVARIANT (F2): the deterministic host salt fallback that used to
+// SECURITY INVARIANT: the deterministic host salt fallback that used to
 // live in generateSalt() is GONE. generateSalt() is now defined only under
 // ARDUINO. A host build has no secure RNG and must supply salt bytes itself.
 

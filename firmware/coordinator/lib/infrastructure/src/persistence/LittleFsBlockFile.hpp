@@ -5,7 +5,7 @@
 namespace gh::infra {
 
 // LittleFS-backed IBlockFile. Keeps a single File handle open for the
-// object's lifetime (E4: one open handle instead of open/seek/close on
+// object's lifetime (one open handle instead of open/seek/close on
 // every record) and mounts LittleFS lazily on first use.
 class LittleFsBlockFile final : public IBlockFile {
 public:

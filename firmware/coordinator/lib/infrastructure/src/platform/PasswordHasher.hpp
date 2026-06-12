@@ -20,7 +20,7 @@ constexpr uint32_t kPbkdf2DefaultIterations = 75'000;
 // Derive a 32-byte key from `password` and the 16-byte `salt`.
 //
 //   - iterations == 0  -> legacy single SHA-256(salt || password). Kept ONLY
-//                         so records written by the pre-remediation firmware
+//                         so records written by the legacy firmware
 //                         still verify (and then get upgraded on login). Never
 //                         pass 0 when hashing a NEW password.
 //   - iterations >  0  -> PBKDF2-HMAC-SHA256(password, salt, iterations).

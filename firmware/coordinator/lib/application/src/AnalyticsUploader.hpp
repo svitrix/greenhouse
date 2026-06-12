@@ -49,7 +49,7 @@ private:
     size_t buildBody_(const gh::domain::TelemetryRecord* records,
                       size_t count, char* out, size_t cap) noexcept;
 
-    // C4: backoff gate, wrap-safe in uint32_t millis space.
+    // backoff gate, wrap-safe in uint32_t millis space.
     [[nodiscard]] bool backoffElapsed_(uint32_t now_ms) const noexcept;
 
     using Cfg = gh::coord::CoordinatorConfig;
@@ -63,9 +63,9 @@ private:
     uint32_t                     backoff_ms_    = 0;  // 0 = no backoff active
     uint32_t                     poison_4xx_    = 0;
     uint32_t                     batch_seq_     = 0;
-    bool                         in_flush_      = false;  // C6 reentrancy guard
+    bool                         in_flush_      = false;  // reentrancy guard
 
-    // C6: scratch/body buffers are class members (allocated once at
+    // scratch/body buffers are class members (allocated once at
     // construction), NOT function-static (reentrancy hazard) and NOT stack
     // locals (kAnalyticsBuildBufBytes = 32 KB blows a task stack). Only
     // analytics_task drives doFlush_() in production; in_flush_ documents and

@@ -106,7 +106,7 @@ void test_reannounce_with_new_short_addr_keeps_registry_entry(void) {
     TEST_ASSERT_TRUE(snap->online);
 }
 
-// D4: a frame whose APS source IEEE does not match the short_addr binding is a
+// a frame whose APS source IEEE does not match the short_addr binding is a
 // spoof and must be rejected — it must not poison the registry/history.
 void test_spoofed_source_ieee_is_rejected(void) {
     InMemoryNodeRegistry reg;

@@ -52,7 +52,7 @@ void test_save_then_load_roundtrip() {
     TEST_ASSERT_EQUAL_UINT32(c.iterations, r.value.iterations);
 }
 
-// A record written by the pre-remediation firmware has no "iter" key. load()
+// A record written by the legacy firmware has no "iter" key. load()
 // must surface iterations == 0 (the legacy single-SHA marker) so the verify
 // path can still authenticate and then upgrade it.
 void test_legacy_record_loads_with_zero_iterations() {

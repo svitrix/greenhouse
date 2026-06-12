@@ -561,7 +561,7 @@ void runOperational(gh::infra::SerialLogger&              log,
             (std::strncmp(acfg.backend_url, "https://", 8) == 0);
         if (load_res == gh::domain::ErrorCode::Ok && acfg.backend_url[0] != '\0'
             && !url_is_https && !acfg.insecure_tls) {
-            // C2: a plain http:// hub URL would ship the Bearer api_key +
+            // a plain http:// hub URL would ship the Bearer api_key +
             // telemetry in cleartext. Refuse to arm the uploader unless the
             // operator explicitly set the insecure dev flag in NVS.
             log.error("analytics",
@@ -571,7 +571,7 @@ void runOperational(gh::infra::SerialLogger&              log,
             if (analytics_queue.begin() != gh::domain::ErrorCode::Ok) {
                 log.warn("analytics", "queue begin failed - disabled");
             } else {
-                // C1: thread the runtime insecure flag through. With no pinned
+                // thread the runtime insecure flag through. With no pinned
                 // CA the client only goes insecure when insecure_tls=true;
                 // otherwise it fails the TLS handshake closed.
                 static gh::infra::EspHttpsClient analytics_http{

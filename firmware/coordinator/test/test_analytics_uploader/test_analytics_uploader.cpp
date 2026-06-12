@@ -112,7 +112,7 @@ void test_body_contains_device_id_and_records() {
     TEST_ASSERT_NOT_NULL(std::strstr(body.c_str(), "\"value\":22.5"));
 }
 
-// C4: the flush gate must stay correct across the 32-bit millis() wrap.
+// the flush gate must stay correct across the 32-bit millis() wrap.
 void test_tick_flushes_across_millis_wrap() {
     FakeClock clk; FakeLogger log; FakeHttpClient http; FakeTelemetryQueue q;
     AnalyticsUploader u{q, http, clk, log, make_cfg(60'000)};
@@ -140,7 +140,7 @@ void test_tick_flushes_across_millis_wrap() {
     TEST_ASSERT_EQUAL_UINT(3, http.calls.size());
 }
 
-// C5: an oversized batch must NOT be posted truncated. The uploader shrinks the
+// an oversized batch must NOT be posted truncated. The uploader shrinks the
 // batch until it fits and posts a *complete* (valid-JSON) smaller body, making
 // forward progress rather than shipping a broken one.
 void test_oversized_batch_is_not_posted_truncated() {
@@ -164,7 +164,7 @@ void test_oversized_batch_is_not_posted_truncated() {
     TEST_ASSERT_TRUE(q.size() > 0);                                       // shrunk, not all
 }
 
-// C5: a non-finite value must not corrupt the JSON body.
+// a non-finite value must not corrupt the JSON body.
 void test_nan_value_does_not_corrupt_body() {
     FakeClock clk; FakeLogger log; FakeHttpClient http; FakeTelemetryQueue q;
     AnalyticsUploader u{q, http, clk, log, make_cfg()};
@@ -181,7 +181,7 @@ void test_nan_value_does_not_corrupt_body() {
     TEST_ASSERT_NOT_NULL(std::strstr(body.c_str(), "\"value\":null"));
 }
 
-// C6: flushNow must honour an active backoff so a manual trigger cannot hammer
+// flushNow must honour an active backoff so a manual trigger cannot hammer
 // a hub that asked us to back off.
 void test_flush_now_honours_active_backoff() {
     FakeClock clk; FakeLogger log; FakeHttpClient http; FakeTelemetryQueue q;

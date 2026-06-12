@@ -59,7 +59,7 @@ void test_node_view_without_alias_is_null(void) {
     TEST_ASSERT_TRUE(root["alias"].isNull());
 }
 
-// B1 regression: build() formats `ieee` / `short_addr` / `present_mask` from
+// Regression: build() formats `ieee` / `short_addr` / `present_mask` from
 // stack-locals that die when build() returns. Those strings must survive into a
 // serializeJson() call made *after* build()'s scope ends — i.e. they must be
 // copied into the document pool, not stored by reference.
