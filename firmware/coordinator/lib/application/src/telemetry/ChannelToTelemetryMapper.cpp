@@ -20,13 +20,13 @@ mapKind(gh::domain::SensorKind kind, gh::protocol::Quantity q) noexcept {
     return std::nullopt;
 }
 
-uint8_t channelIdFor(gh::protocol::Quantity q) noexcept {
+std::optional<uint8_t> channelIdFor(gh::protocol::Quantity q) noexcept {
     for (size_t i = 0; i < gh::protocol::kChannelAttrTableSize; ++i) {
         if (gh::protocol::kChannelAttrTable[i].quantity == q) {
             return gh::protocol::kChannelAttrTable[i].channel_id;
         }
     }
-    return 0;
+    return std::nullopt;
 }
 
 }  // namespace
@@ -40,9 +40,12 @@ ChannelToTelemetryMapper::map(
     auto tk = mapKind(s.kind, s.quantity);
     if (!tk) return std::nullopt;
 
+    auto channel_id = channelIdFor(s.quantity);
+    if (!channel_id) return std::nullopt;
+
     gh::domain::TelemetryRecord r{};
     r.ts_unix_ms = unix_ts_ms;
-    r.channel_id = channelIdFor(s.quantity);
+    r.channel_id = *channel_id;
     r.kind       = *tk;
     r.value      = s.value_si;
     r.raw        = gh::domain::kTelemetryRawNotApplicable;

@@ -20,7 +20,7 @@ presentation/src/
 
 | File                                                                                   | Purpose                                                                                                                                                                            |
 |----------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [`MqttCommandRouter.{hpp,cpp}`](src/MqttCommandRouter.cpp)                             | Subscribes to `greenhouse/<dev>/pump/cmd`, parses `"ON"` / `"OFF"` payloads, invokes the bound `on()` / `off()` handlers (set up to call `IrrigationService::requestOn/Off`). Stateless, no allocations. |
+| [`MqttCommandRouter.{hpp,cpp}`](src/MqttCommandRouter.cpp)                             | Subscribes to `greenhouse/<dev>/pump/cmd`, parses `"ON"` / `"OFF"` payloads, invokes the bound `on()` / `off()` handlers (set up to call `IrrigationService::requestOn/Off`). The ctor builds the cmd topic once via `std::string` (composition-time allocation, acceptable); the inbound hot path (`onMessage`) does no allocations. |
 | [`RestHelpers.hpp`](src/RestHelpers.hpp)                                               | Header-only inline helpers shared by every `Rest*Routes` module: `finishJsonResponse()` (stamp HTTP code + `Cache-Control: no-store` + `send`) and `sendError()` (build the `{ok,error,message}` envelope via ArduinoJson). |
 
 ### Multi-node surface

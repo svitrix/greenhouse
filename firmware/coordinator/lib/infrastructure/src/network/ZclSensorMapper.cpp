@@ -11,6 +11,12 @@ static int16_t readI16LE(const uint8_t* p) noexcept {
     return static_cast<int16_t>(readU16LE(p));
 }
 
+// The ZCL temperature encoding (signed int16, centi-degrees Celsius) is
+// identical for air and soil readings, so a single converter serves both.
+static float centiDegreesFromZcl(int16_t zcl_value) noexcept {
+    return static_cast<float>(gh::protocol::airTempFromZcl(zcl_value)) / 10.0f;
+}
+
 std::optional<ZclSensorMapper::Decoded>
 ZclSensorMapper::decode(uint8_t ep, uint16_t cluster, uint16_t attr,
                         const uint8_t* raw, size_t len) noexcept
@@ -24,11 +30,9 @@ ZclSensorMapper::decode(uint8_t ep, uint16_t cluster, uint16_t attr,
             const int16_t v = readI16LE(raw);
             switch (e->quantity) {
                 case gh::protocol::Quantity::AirTempC:
-                    return Decoded{e->kind, e->quantity,
-                        static_cast<float>(gh::protocol::airTempFromZcl(v)) / 10.0f};
+                    return Decoded{e->kind, e->quantity, centiDegreesFromZcl(v)};
                 case gh::protocol::Quantity::SoilTempC:
-                    return Decoded{e->kind, e->quantity,
-                        static_cast<float>(gh::protocol::airTempFromZcl(v)) / 10.0f};
+                    return Decoded{e->kind, e->quantity, centiDegreesFromZcl(v)};
                 default: return std::nullopt;
             }
         }

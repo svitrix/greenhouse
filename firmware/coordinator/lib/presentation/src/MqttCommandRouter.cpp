@@ -9,6 +9,9 @@ MqttCommandRouter::MqttCommandRouter(gh::domain::IMqttClient& mqtt,
                                      Handler off_handler) noexcept
     : mqtt_(mqtt),
       device_id_(std::move(device_id)),
+      // Builds the cmd topic once via std::string. This is a composition-time
+      // (setup) allocation, which is acceptable — the hot path (onMessage) does
+      // no allocations. Only construction here touches the heap.
       cmd_topic_("greenhouse/" + device_id_ + "/pump/cmd"),
       on_handler_(std::move(on_handler)),
       off_handler_(std::move(off_handler)) {
