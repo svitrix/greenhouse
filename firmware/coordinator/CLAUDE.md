@@ -319,8 +319,14 @@ The captive provisioning form requires three fields beyond Wi-Fi + MQTT:
 - **Admin password** — minimum 8 characters
 - **Confirm password** — must match
 
-These are stored as `SHA-256(salt || password)` + 16-byte salt in NVS
-namespace `admin`. Plaintext password is never persisted.
+These are stored as `PBKDF2-HMAC-SHA256(password, salt, iterations)` + a
+16-byte salt + the iteration count (`kPbkdf2DefaultIterations`, currently
+75k — re-tune on hardware) in NVS namespace `admin`. Plaintext password is
+never persisted. **Migration:** a board flashed from the pre-remediation
+firmware has a legacy single-`SHA-256(salt || password)` record (no `iter`
+key → iterations `0`). It still authenticates; on the next successful login
+the verify path transparently re-hashes the password with PBKDF2 and rewrites
+the record. No re-provisioning is needed to upgrade.
 
 After reboot, opening `http://greenhouse.local/` triggers a browser
 sign-in popup ("Sign in to Greenhouse Admin").

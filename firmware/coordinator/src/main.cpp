@@ -462,14 +462,34 @@ void runOperational(gh::infra::SerialLogger&              log,
             }
 
             uint8_t incoming[gh::domain::AdminCreds::kHashLen];
-            gh::infra::hashPassword(pass, loaded.value.salt, incoming);
+            // Verify against the KDF the record was written with (iterations is
+            // self-describing; 0 == legacy single SHA-256). Constant-time
+            // compare below is unchanged.
+            gh::infra::hashPassword(pass, loaded.value.salt,
+                                    loaded.value.iterations, incoming);
 
             uint8_t diff = 0;
             for (std::size_t i = 0; i < gh::domain::AdminCreds::kHashLen; ++i) {
                 diff = static_cast<uint8_t>(
                     diff | (incoming[i] ^ loaded.value.password_hash[i]));
             }
-            return diff == 0;
+            if (diff != 0) {
+                return false;
+            }
+
+            // Transparent migration: a correct password stored under the legacy
+            // single-SHA round, or an older PBKDF2 iteration count, is re-hashed
+            // with the current default and persisted. Same salt is fine -
+            // raising the work factor is the point. A failed save just leaves
+            // the old (still-valid) record in place; auth still succeeds.
+            if (loaded.value.iterations != gh::infra::kPbkdf2DefaultIterations) {
+                gh::domain::AdminCreds upgraded = loaded.value;
+                upgraded.iterations = gh::infra::kPbkdf2DefaultIterations;
+                gh::infra::hashPassword(pass, upgraded.salt,
+                                        upgraded.iterations, upgraded.password_hash);
+                (void)admin_creds_store.save(upgraded);
+            }
+            return true;
         });
 
     // Global middleware order: rate-limit first (cheap reject of brute force),
