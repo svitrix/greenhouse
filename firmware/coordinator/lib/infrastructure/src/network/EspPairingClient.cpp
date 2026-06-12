@@ -1,4 +1,6 @@
 #include "EspPairingClient.hpp"
+#include "PairingUrl.hpp"
+#include "util/ClaimCode.hpp"
 #include <ArduinoJson.h>
 #include <cstdio>
 #include <cstring>
@@ -24,33 +26,36 @@ ErrorCode EspPairingClient::claim(
     }
     api_key_out[0] = '\0';
 
-    // Build the claim URL. The captive-portal field carries the analytics
-    // /ingest URL; replace the "/ingest" suffix with the claim path.
-    char url[192];
-    std::snprintf(url, sizeof(url), "%s", backend_url);
-    char* ingest = std::strstr(url, "/ingest");
-    if (ingest != nullptr) {
-        std::snprintf(ingest, sizeof(url) - (ingest - url),
-                      "/api/pairing/claim");
-    } else {
-        std::strncat(url, "/api/pairing/claim",
-                     sizeof(url) - std::strlen(url) - 1);
+    // Defence in depth: the claim code is also validated server-side in the
+    // provisioning handler, but never trust an unvalidated value into the body.
+    if (claim_code == nullptr ||
+        !gh::domain::isValidClaimCode(claim_code)) {
+        return ErrorCode::InvalidArgument;
     }
 
+    // Build the claim URL from the analytics /ingest URL (pure helper).
+    char url[192];
+    if (!buildClaimUrl(backend_url, url, sizeof(url))) {
+        return ErrorCode::InvalidArgument;
+    }
+
+    // Build the JSON body with ArduinoJson so any byte in device_id / mac /
+    // fw_version / profile_id is correctly escaped (no raw snprintf injection).
+    StaticJsonDocument<384> req;
+    req["claim_code"]  = claim_code;
+    req["device_id"]   = device_id;
+    req["mac"]         = mac;
+    req["fw_version"]  = fw_version;
+    req["profile_id"]  = profile_id;
     char body[384];
-    const int n = std::snprintf(
-        body, sizeof(body),
-        "{\"claim_code\":\"%s\",\"device_id\":\"%s\",\"mac\":\"%s\","
-        "\"fw_version\":\"%s\",\"profile_id\":\"%s\"}",
-        claim_code, device_id, mac, fw_version, profile_id
-    );
-    if (n < 0 || static_cast<size_t>(n) >= sizeof(body)) {
+    const size_t n = serializeJson(req, body, sizeof(body));
+    if (n == 0 || n >= sizeof(body)) {
         return ErrorCode::InvalidArgument;
     }
 
     char resp_body[256];
     const auto resp = http_.postJsonWithBody(
-        url, /*api_key=*/"", body, static_cast<size_t>(n),
+        url, /*api_key=*/"", body, n,
         /*timeout_ms=*/10'000, resp_body, sizeof(resp_body)
     );
 
