@@ -9,6 +9,7 @@ namespace gh::app {
 
 enum class AutoWaterOutcome : uint8_t {
     Started,
+    Stopped,
     SkipAboveThreshold,
     LockNoFreshSoil,
     LockInsufficientSources,

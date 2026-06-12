@@ -56,7 +56,8 @@ void RestPumpRoutes::registerOn(AsyncWebServer& server) noexcept {
             JsonDocument out;
             out["state"]   = pumpStateCode(pump_.state());
             out["outcome"] = gh::app::outcomeCode(d.outcome);
-            if (d.outcome == gh::app::AutoWaterOutcome::Started) {
+            if (d.outcome == gh::app::AutoWaterOutcome::Started ||
+                d.outcome == gh::app::AutoWaterOutcome::Stopped) {
                 out["ok"] = true;
                 auto* resp = req->beginResponseStream("application/json");
                 serializeJson(out, *resp);

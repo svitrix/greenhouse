@@ -55,6 +55,14 @@ gh::domain::ErrorCode RelayPump::turnOff() noexcept {
     return gh::domain::ErrorCode::Ok;
 }
 
+// De-energise the relay and latch the fault state. state() now reports
+// SafetyLocked until an explicit turnOff() re-arms the pump.
+gh::domain::ErrorCode RelayPump::lock() noexcept {
+    gpio_.digitalWrite(pin_, kLow);
+    state_ = gh::domain::PumpState::SafetyLocked;
+    return gh::domain::ErrorCode::Ok;
+}
+
 gh::domain::PumpState RelayPump::state() const noexcept { return state_; }
 
 }  // namespace gh::infra
