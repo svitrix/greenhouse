@@ -42,3 +42,12 @@ services/dashboard/vite.config.d.ts
 
 # CodeGraph index — local to each machine
 .codegraph/
+
+# Local PlatformIO toolchain venv (not committed)
+.pio-venv/
+
+# Claude Code agent worktrees — local to each machine
+.claude/worktrees/
+
+# Python build artifacts
+services/hub/build/
