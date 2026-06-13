@@ -1,7 +1,10 @@
-.PHONY: dev test up down logs psql migrate fmt smoke ui ui-logs
+.PHONY: dev bot-logs test up down logs psql migrate fmt smoke ui ui-logs
 
 dev:
 	uvicorn app.main:app --reload
+
+bot-logs:
+	docker compose logs -f bot
 
 test:
 	pytest -v

@@ -1,0 +1,44 @@
+# Local development overlay — hot reload for hub + dashboard.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up timescaledb hub dashboard
+#
+# hub:       source bind-mounted, uvicorn --reload, migrations applied on boot.
+# dashboard: vite dev server with HMR on :5173, source bind-mounted.
+# The `bot` service from the base file is left out (needs Telegram tokens).
+services:
+  hub:
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
+    volumes:
+      - ./app:/app/app
+      - ./alembic:/app/alembic
+      - ./alembic.ini:/app/alembic.ini
+    environment:
+      LOG_LEVEL: DEBUG
+
+  dashboard:
+    build:
+      context: ../dashboard
+      target: dev
+    command: npm run dev -- --host 0.0.0.0 --port 5173
+    ports:
+      - "5173:5173"
+    volumes:
+      - ../dashboard:/app
+      - /app/node_modules
+    environment:
+      VITE_BACKEND_URL: http://localhost:8000
+
+  bot:
+    # Config comes from services/bot/.env; only HUB_API_URL is overridden so the
+    # bot reaches the hub over the compose network instead of localhost.
+    # !override replaces the base environment block (which would otherwise blank
+    # out HUB_ADMIN_TOKEN / TELEGRAM_BOT_TOKEN via empty shell interpolation).
+    env_file:
+      - ../bot/.env
+    environment: !override
+      HUB_API_URL: http://hub:8000
+      LOG_LEVEL: DEBUG
+    volumes:
+      - ../bot/bot:/app/bot
