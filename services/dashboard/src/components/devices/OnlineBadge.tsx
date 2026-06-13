@@ -1,12 +1,9 @@
-import { Badge } from "@/components/ui/badge";
+import { StateBadge } from "@/components/device/StateBadge";
 
 export function OnlineBadge({ online }: { online: boolean }) {
-  return (
-    <Badge
-      variant={online ? "default" : "secondary"}
-      className={online ? "bg-emerald-500 text-white hover:bg-emerald-500" : ""}
-    >
-      {online ? "online" : "offline"}
-    </Badge>
+  return online ? (
+    <StateBadge tone="optimal" label="online" />
+  ) : (
+    <StateBadge tone="offline" label="offline" />
   );
 }

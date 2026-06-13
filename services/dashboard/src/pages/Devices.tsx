@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { RefreshCw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { GlassCard } from "@/components/device/GlassCard";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,6 +23,7 @@ import { DeviceDetailSheet } from "@/components/devices/DeviceDetailSheet";
 import type { Device } from "@/schemas/device";
 
 export default function Devices() {
+  const navigate = useNavigate();
   const { data, isLoading, isError, error, refetch, isFetching } =
     useDevicesQuery();
   const revoke = useRevokeDeviceMutation();
@@ -40,7 +43,7 @@ export default function Devices() {
   return (
     <div className="space-y-4">
       <header className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">
+        <h1 className="font-display text-h1 font-semibold">
           Devices{" "}
           {data && (
             <span className="ml-2 text-base text-muted-foreground">
@@ -68,11 +71,14 @@ export default function Devices() {
         </p>
       )}
       {data && (
-        <DeviceTable
-          devices={data}
-          onRevoke={setRevokeTarget}
-          onShowDetail={setDetailTarget}
-        />
+        <GlassCard className="p-0">
+          <DeviceTable
+            devices={data}
+            onRevoke={setRevokeTarget}
+            onShowDetail={setDetailTarget}
+            onOpenDevice={(id) => navigate(`/devices/${id}`)}
+          />
+        </GlassCard>
       )}
 
       <DeviceDetailSheet

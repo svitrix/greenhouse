@@ -4,6 +4,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
 import Devices from "@/pages/Devices";
+import DeviceDashboard from "@/pages/DeviceDashboard";
 
 export function AppRoutes() {
   return (
@@ -13,6 +14,7 @@ export function AppRoutes() {
         <Route element={<AppShell />}>
           <Route index element={<Dashboard />} />
           <Route path="/devices" element={<Devices />} />
+          <Route path="/devices/:deviceId" element={<DeviceDashboard />} />
         </Route>
       </Route>
     </Routes>

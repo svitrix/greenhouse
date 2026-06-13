@@ -25,9 +25,15 @@ interface Props {
   devices: Device[];
   onRevoke: (deviceId: string) => void;
   onShowDetail: (device: Device) => void;
+  onOpenDevice?: (deviceId: string) => void;
 }
 
-export function DeviceTable({ devices, onRevoke, onShowDetail }: Props) {
+export function DeviceTable({
+  devices,
+  onRevoke,
+  onShowDetail,
+  onOpenDevice,
+}: Props) {
   return (
     <Table>
       <TableHeader>
@@ -54,7 +60,18 @@ export function DeviceTable({ devices, onRevoke, onShowDetail }: Props) {
         )}
         {devices.map((d) => (
           <TableRow key={d.device_id}>
-            <TableCell className="font-mono text-xs">{d.device_id}</TableCell>
+            <TableCell className="font-mono text-xs">
+              {onOpenDevice ? (
+                <button
+                  onClick={() => onOpenDevice(d.device_id)}
+                  className="font-medium text-[hsl(var(--primary))] underline-offset-2 hover:underline"
+                >
+                  {d.device_id}
+                </button>
+              ) : (
+                d.device_id
+              )}
+            </TableCell>
             <TableCell>
               {d.friendly_name ?? (
                 <span className="italic text-muted-foreground">—</span>
@@ -82,8 +99,13 @@ export function DeviceTable({ devices, onRevoke, onShowDetail }: Props) {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  {onOpenDevice && (
+                    <DropdownMenuItem onClick={() => onOpenDevice(d.device_id)}>
+                      Open dashboard
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem onClick={() => onShowDetail(d)}>
-                    Details
+                    Quick details
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="text-destructive"

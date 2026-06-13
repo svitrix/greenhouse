@@ -16,6 +16,15 @@ export default {
           "Helvetica Neue",
           "sans-serif",
         ],
+        display: [
+          "Metropolis",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "SF Pro Display",
+          "system-ui",
+          "Segoe UI",
+          "sans-serif",
+        ],
         mono: [
           "ui-monospace",
           "SF Mono",
@@ -24,6 +33,25 @@ export default {
           "Consolas",
           "monospace",
         ],
+      },
+      fontSize: {
+        display: ["2.75rem", { lineHeight: "1", letterSpacing: "-0.025em" }],
+        h1: ["1.375rem", { lineHeight: "1.2", letterSpacing: "-0.015em" }],
+        h2: ["1rem", { lineHeight: "1.3", letterSpacing: "-0.01em" }],
+        body: ["0.9375rem", { lineHeight: "1.4" }],
+        small: ["0.8125rem", { lineHeight: "1.4" }],
+        tiny: ["0.6875rem", { lineHeight: "1.4" }],
+      },
+      backgroundImage: {
+        "grad-ai": "var(--grad-ai)",
+      },
+      backdropBlur: {
+        glass: "18px",
+      },
+      boxShadow: {
+        card: "var(--sh-card)",
+        pop: "var(--sh-pop)",
+        glass: "var(--sh-glass)",
       },
       colors: {
         background: "hsl(var(--background))",
@@ -96,9 +124,30 @@ export default {
         vbat: { DEFAULT: "hsl(var(--k-vbat))", bg: "hsl(var(--k-vbat-bg))" },
       },
       borderRadius: {
+        xl: "calc(var(--radius) + 6px)",
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        pill: "999px",
+      },
+      keyframes: {
+        "gh-pulse": {
+          "0%": { boxShadow: "0 0 0 0 hsl(var(--primary) / 0.4)" },
+          "70%": { boxShadow: "0 0 0 7px hsl(var(--primary) / 0)" },
+          "100%": { boxShadow: "0 0 0 0 hsl(var(--primary) / 0)" },
+        },
+        "gh-blink": { "50%": { opacity: "0.25" } },
+        "gh-fall": {
+          "0%": { transform: "translateY(-10px) scaleY(0.6)", opacity: "0" },
+          "10%": { opacity: "0.65" },
+          "90%": { opacity: "0.65" },
+          "100%": { transform: "translateY(120px) scaleY(1.1)", opacity: "0" },
+        },
+      },
+      animation: {
+        "gh-pulse": "gh-pulse 2s ease-out infinite",
+        "gh-blink": "gh-blink 1.4s ease-in-out infinite",
+        "gh-fall": "gh-fall 1.1s linear infinite",
       },
     },
   },

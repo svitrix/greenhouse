@@ -3,121 +3,278 @@
 @tailwind utilities;
 
 /* ============================================================
-   Greenhouse Hub — design system tokens (shadcn HSL format)
-   Ported from the design prototype (hub/tokens.css): deep
-   petrol-teal · electric lime · pale mint. Lime = live/active.
+   Greenhouse Hub — "AI Greenhouse" frosted-glass design system
+   Ported from design_handoff_greenhouse/device_ui/app.css.
+   Natural sage/leaf greens on translucent surfaces over a soft
+   green→sky page gradient; glowing lime→green AI accent.
+   shadcn tokens are HSL triplets; glass/gradient/shadow tokens
+   are raw values consumed via tailwind.config + utilities below.
    ============================================================ */
 @layer base {
   :root {
-    --background: 160 36% 95%;
-    --foreground: 188 66% 11%;
-    --card: 0 0% 100%;
-    --card-foreground: 188 66% 11%;
+    /* ---- shadcn semantic tokens (light) -------------------- */
+    --background: 129 19% 93%;
+    --foreground: 90 19% 11%;
+    --card: 90 33% 97%;
+    --card-foreground: 90 19% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 188 66% 11%;
-    --muted: 162 29% 91%;
-    --muted-foreground: 170 11% 41%;
-    --primary: 189 69% 15%;
-    --primary-foreground: 165 50% 97%;
-    --primary-hover: 189 69% 21%;
-    --secondary: 160 27% 89%;
-    --secondary-foreground: 189 63% 18%;
-    --accent: 162 35% 93%;
-    --accent-foreground: 188 66% 11%;
-    --destructive: 5 65% 50%;
-    --destructive-foreground: 10 100% 98%;
-    --destructive-bg: 10 75% 94%;
-    --destructive-border: 10 59% 85%;
-    --border: 162 26% 85%;
-    --border-strong: 165 24% 77%;
-    --input: 162 26% 85%;
-    --ring: 169 63% 33%;
+    --popover-foreground: 90 19% 11%;
+    --muted: 87 31% 94%;
+    --muted-foreground: 83 8% 47%;
+    --primary: 101 36% 35%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 97 35% 39%;
+    --secondary: 86 30% 90%;
+    --secondary-foreground: 101 32% 27%;
+    --accent: 86 40% 92%;
+    --accent-foreground: 90 19% 11%;
+    --destructive: 6 76% 57%;
+    --destructive-foreground: 0 0% 100%;
+    --destructive-bg: 11 79% 91%;
+    --destructive-border: 11 50% 84%;
+    --border: 90 22% 80%;
+    --border-strong: 90 22% 72%;
+    --input: 90 22% 80%;
+    --ring: 95 34% 46%;
 
-    --lime: 68 82% 59%;
-    --lime-deep: 68 73% 47%;
-    --lime-foreground: 83 79% 9%;
+    --lime: 81 76% 63%;
+    --lime-deep: 86 55% 51%;
+    --lime-foreground: 86 75% 11%;
 
-    --ok: 169 63% 33%;
-    --ok-bg: 158 44% 89%;
-    --ok-fg: 167 64% 23%;
-    --warning: 39 71% 42%;
-    --warning-bg: 43 71% 89%;
-    --warning-fg: 38 77% 27%;
-    --danger: 5 65% 50%;
-    --danger-bg: 10 79% 92%;
-    --danger-fg: 4 70% 34%;
-    --info: 194 55% 41%;
-    --info-bg: 192 47% 90%;
-    --info-fg: 194 57% 25%;
+    --ok: 95 34% 40%;
+    --ok-bg: 86 48% 88%;
+    --ok-fg: 94 47% 25%;
+    --warning: 36 66% 51%;
+    --warning-bg: 43 62% 89%;
+    --warning-fg: 44 75% 25%;
+    --danger: 6 76% 57%;
+    --danger-bg: 11 79% 91%;
+    --danger-fg: 6 64% 37%;
+    --info: 191 36% 48%;
+    --info-bg: 188 37% 88%;
+    --info-fg: 190 51% 25%;
 
-    --k-soil: 169 54% 40%;
-    --k-soil-bg: 166 44% 89%;
-    --k-temp: 28 61% 47%;
-    --k-temp-bg: 35 60% 89%;
-    --k-hum: 194 55% 41%;
-    --k-hum-bg: 192 47% 90%;
-    --k-vbat: 72 41% 38%;
-    --k-vbat-bg: 72 50% 88%;
+    /* sensor-kind accents */
+    --k-soil: 93 29% 50%;
+    --k-soil-bg: 86 48% 88%;
+    --k-temp: 24 62% 45%;
+    --k-temp-bg: 27 75% 88%;
+    --k-hum: 191 36% 48%;
+    --k-hum-bg: 188 37% 88%;
+    --k-vbat: 86 55% 45%;
+    --k-vbat-bg: 86 40% 88%;
 
-    --radius: 0.75rem;
+    --radius: 0.9rem;
+
+    /* ---- frosted-glass surfaces (raw, need backdrop-filter) -- */
+    --glass-card: rgba(255, 255, 255, 0.55);
+    --glass-card-2: rgba(255, 255, 255, 0.74);
+    --glass-card-3: rgba(255, 255, 255, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.7);
+    --glass-edge: rgba(120, 140, 110, 0.16);
+    --glass-blur: 18px;
+
+    /* ---- gradients & shadows ------------------------------- */
+    --grad-ai: linear-gradient(118deg, #c4ef63 0%, #7ec23f 52%, #4e9f3d 100%);
+    --grad-page: linear-gradient(168deg, #e7eff2 0%, #ecf1e6 46%, #e3edd5 100%);
+    --grad-wash:
+      radial-gradient(circle at 18% 18%, rgba(183, 232, 90, 0.14) 0, transparent 50%),
+      radial-gradient(circle at 84% 82%, rgba(79, 151, 168, 0.08) 0, transparent 55%);
+
+    --sh-card: 0 1px 2px rgba(40, 55, 30, 0.05), 0 8px 22px -12px rgba(40, 55, 30, 0.18);
+    --sh-pop: 0 18px 44px -20px rgba(35, 50, 25, 0.32);
+    --sh-glass:
+      0 1px 0 rgba(255, 255, 255, 0.55) inset,
+      0 10px 30px -16px rgba(40, 60, 30, 0.28),
+      0 2px 8px -4px rgba(40, 60, 30, 0.1);
   }
 
   .dark {
-    --background: 192 68% 7%;
-    --foreground: 166 37% 88%;
-    --card: 190 63% 12%;
-    --card-foreground: 166 37% 88%;
-    --popover: 190 61% 13%;
-    --popover-foreground: 166 37% 88%;
-    --muted: 190 59% 15%;
-    --muted-foreground: 168 15% 60%;
-    --primary: 166 57% 43%;
-    --primary-foreground: 188 79% 6%;
-    --primary-hover: 166 53% 50%;
-    --secondary: 191 56% 16%;
-    --secondary-foreground: 167 35% 81%;
-    --accent: 190 61% 16%;
-    --accent-foreground: 166 37% 88%;
-    --destructive: 7 83% 65%;
-    --destructive-foreground: 5 73% 6%;
-    --destructive-bg: 6 53% 15%;
-    --destructive-border: 8 53% 23%;
-    --border: 190 49% 20%;
-    --border-strong: 189 45% 27%;
-    --input: 190 49% 20%;
-    --ring: 166 53% 50%;
+    --background: 150 30% 7%;
+    --foreground: 96 18% 88%;
+    --card: 150 24% 11%;
+    --card-foreground: 96 18% 88%;
+    --popover: 150 26% 12%;
+    --popover-foreground: 96 18% 88%;
+    --muted: 150 20% 15%;
+    --muted-foreground: 96 12% 60%;
+    --primary: 95 45% 52%;
+    --primary-foreground: 96 40% 8%;
+    --primary-hover: 95 48% 58%;
+    --secondary: 150 22% 16%;
+    --secondary-foreground: 96 25% 81%;
+    --accent: 150 24% 16%;
+    --accent-foreground: 96 18% 88%;
+    --destructive: 7 80% 64%;
+    --destructive-foreground: 5 70% 7%;
+    --destructive-bg: 6 45% 16%;
+    --destructive-border: 8 45% 24%;
+    --border: 150 20% 20%;
+    --border-strong: 150 20% 27%;
+    --input: 150 20% 20%;
+    --ring: 95 48% 55%;
 
-    --lime: 67 90% 64%;
-    --lime-deep: 67 67% 51%;
-    --lime-foreground: 94 53% 8%;
+    --lime: 81 80% 64%;
+    --lime-deep: 86 60% 50%;
+    --lime-foreground: 90 50% 9%;
 
-    --ok: 164 58% 48%;
-    --ok-bg: 173 57% 15%;
-    --ok-fg: 163 65% 66%;
-    --warning: 40 73% 56%;
-    --warning-bg: 42 53% 15%;
-    --warning-fg: 40 80% 71%;
-    --danger: 7 83% 65%;
-    --danger-bg: 6 53% 15%;
-    --danger-fg: 9 80% 78%;
-    --info: 193 57% 56%;
-    --info-bg: 192 55% 15%;
-    --info-fg: 191 59% 73%;
+    --ok: 95 45% 50%;
+    --ok-bg: 120 35% 14%;
+    --ok-fg: 94 50% 68%;
+    --warning: 38 70% 56%;
+    --warning-bg: 40 45% 15%;
+    --warning-fg: 40 75% 70%;
+    --danger: 7 80% 64%;
+    --danger-bg: 6 45% 16%;
+    --danger-fg: 9 78% 77%;
+    --info: 191 50% 55%;
+    --info-bg: 190 45% 15%;
+    --info-fg: 190 55% 72%;
 
-    --k-soil: 167 54% 51%;
-    --k-soil-bg: 173 57% 15%;
-    --k-temp: 34 69% 61%;
-    --k-temp-bg: 30 37% 16%;
-    --k-hum: 193 57% 56%;
-    --k-hum-bg: 192 55% 15%;
-    --k-vbat: 69 51% 57%;
-    --k-vbat-bg: 72 39% 15%;
+    --k-soil: 93 40% 55%;
+    --k-soil-bg: 120 35% 14%;
+    --k-temp: 27 60% 58%;
+    --k-temp-bg: 27 35% 15%;
+    --k-hum: 191 50% 55%;
+    --k-hum-bg: 190 45% 15%;
+    --k-vbat: 86 50% 56%;
+    --k-vbat-bg: 86 35% 14%;
+
+    --glass-card: rgba(28, 44, 32, 0.5);
+    --glass-card-2: rgba(30, 48, 34, 0.66);
+    --glass-card-3: rgba(24, 38, 28, 0.4);
+    --glass-border: rgba(150, 200, 150, 0.14);
+    --glass-edge: rgba(20, 30, 18, 0.4);
+
+    --grad-page: linear-gradient(168deg, #0c1712 0%, #0e1810 46%, #101a0c 100%);
+    --grad-wash:
+      radial-gradient(circle at 18% 18%, rgba(140, 199, 63, 0.1) 0, transparent 50%),
+      radial-gradient(circle at 84% 82%, rgba(79, 151, 168, 0.08) 0, transparent 55%);
+
+    --sh-glass:
+      0 1px 0 rgba(255, 255, 255, 0.06) inset,
+      0 12px 34px -16px rgba(0, 0, 0, 0.6),
+      0 2px 8px -4px rgba(0, 0, 0, 0.4);
   }
 
-  * { @apply border-border; }
+  * {
+    @apply border-border;
+  }
+
   body {
     @apply bg-background text-foreground;
-    font-family: "Metropolis", -apple-system, BlinkMacSystemFont, "Segoe UI",
-      Roboto, "Helvetica Neue", sans-serif;
+    font-family: "Metropolis", -apple-system, BlinkMacSystemFont, "SF Pro Text",
+      system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    letter-spacing: -0.005em;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    background-image: var(--grad-wash), var(--grad-page);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  /* frosted glass surface variants */
+  .glass {
+    background: var(--glass-card);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--sh-glass);
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    backdrop-filter: blur(var(--glass-blur));
+  }
+  .glass-2 {
+    background: var(--glass-card-2);
+    border: 1px solid var(--glass-border);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+  .glass-3 {
+    background: var(--glass-card-3);
+    border: 1px solid var(--glass-border);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  /* tabular numerals for live values */
+  .num {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  /* sensor-state badge — text label always present (colorblind-safe) */
+  .state-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 9px 3px 7px;
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    background: hsl(var(--ok-bg));
+    color: hsl(var(--ok-fg));
+  }
+  .state-badge::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.8;
+  }
+  .state-badge[data-tone="optimal"],
+  .state-badge[data-tone="moist"] {
+    background: hsl(86 48% 88%);
+    color: hsl(94 47% 25%);
+  }
+  .state-badge[data-tone="dry"] {
+    background: hsl(40 68% 89%);
+    color: hsl(37 72% 30%);
+  }
+  .state-badge[data-tone="cool"] {
+    background: hsl(190 33% 89%);
+    color: hsl(190 47% 26%);
+  }
+  .state-badge[data-tone="warm"] {
+    background: hsl(43 62% 89%);
+    color: hsl(44 75% 25%);
+  }
+  .state-badge[data-tone="humid"],
+  .state-badge[data-tone="wet"] {
+    background: hsl(188 37% 88%);
+    color: hsl(190 51% 25%);
+  }
+  .state-badge[data-tone="saturated"] {
+    background: hsl(194 35% 86%);
+    color: hsl(194 61% 21%);
+  }
+  .state-badge[data-tone="hot"] {
+    background: hsl(27 75% 88%);
+    color: hsl(24 62% 33%);
+  }
+  .state-badge[data-tone="cold"] {
+    background: hsl(196 28% 86%);
+    color: hsl(197 48% 21%);
+  }
+  .state-badge[data-tone="alert"] {
+    background: hsl(11 79% 91%);
+    color: hsl(6 64% 37%);
+  }
+  .state-badge[data-tone="offline"],
+  .state-badge[data-tone="nodata"] {
+    background: hsl(92 24% 89%);
+    color: hsl(90 10% 40%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

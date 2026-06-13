@@ -7,6 +7,7 @@ import {
   Activity,
   KeyRound,
   ShieldCheck,
+  Leaf,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,8 +23,13 @@ const NAV = [
 
 export function Sidebar() {
   return (
-    <aside className="w-64 border-r bg-muted/30 p-4">
-      <div className="mb-6 text-lg font-semibold">🌱 Greenhouse</div>
+    <aside className="glass m-3 mr-0 flex w-60 flex-col rounded-lg p-4">
+      <div className="mb-6 flex items-center gap-2.5 px-1">
+        <span className="inline-flex h-9 w-9 items-center justify-center rounded-[12px] bg-grad-ai text-[hsl(var(--lime-foreground))] shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_6px_18px_-6px_rgba(110,180,60,0.55)]">
+          <Leaf className="h-5 w-5" strokeWidth={2} />
+        </span>
+        <span className="font-display text-h2 font-semibold tracking-tight">Greenhouse</span>
+      </div>
       <nav className="space-y-1">
         {NAV.map((item) => {
           const Icon = item.icon;
@@ -31,8 +37,8 @@ export function Sidebar() {
             return (
               <div
                 key={item.to}
-                title="Coming in D-3b/D-3c"
-                className="flex cursor-not-allowed items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground/60"
+                title="Coming soon"
+                className="flex cursor-not-allowed items-center gap-2.5 rounded-md px-3 py-2 text-small text-muted-foreground/50"
               >
                 <Icon className="h-4 w-4" />
                 {item.label}
@@ -46,10 +52,10 @@ export function Sidebar() {
               end={item.to === "/"}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center gap-2 rounded-md px-3 py-2 text-sm",
+                  "flex items-center gap-2.5 rounded-md px-3 py-2 text-small font-medium transition-colors",
                   isActive
-                    ? "bg-primary text-primary-foreground"
-                    : "hover:bg-accent hover:text-accent-foreground",
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
                 )
               }
             >
