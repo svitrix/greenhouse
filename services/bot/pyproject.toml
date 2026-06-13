@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["bot*"]
+
+[tool.setuptools.package-data]
+"bot.i18n" = ["locales/*.json"]
+
+[project]
+name = "greenhouse-bot"
+version = "0.1.0"
+requires-python = ">=3.14"
+dependencies = [
+    "python-telegram-bot[job-queue]==22.8",
+    "httpx==0.28.1",
+    "pydantic==2.13.4",
+    "pydantic-settings==2.14.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.0.3",
+    "pytest-asyncio==1.4.0",
+    "ruff==0.15.17",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"

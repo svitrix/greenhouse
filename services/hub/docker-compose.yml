@@ -24,6 +24,21 @@ services:
       DEVICE_API_KEYS: '{"gh-a1b2c3d4": "dev-secret-key"}'
       LOG_LEVEL: INFO
 
+  bot:
+    build:
+      context: ../bot
+    restart: unless-stopped
+    depends_on: [hub]
+    environment:
+      HUB_API_URL: http://hub:8000
+      HUB_ADMIN_TOKEN: ${HUB_ADMIN_TOKEN:-}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_ALLOWED_USER_IDS: ${TELEGRAM_ALLOWED_USER_IDS:-}
+      BOT_POLL_SECONDS: ${BOT_POLL_SECONDS:-30}
+      LOG_LEVEL: INFO
+    volumes:
+      - botdata:/data
+
   dashboard:
     build:
       context: ../dashboard
@@ -35,3 +50,4 @@ services:
 
 volumes:
   pgdata:
+  botdata:
