@@ -15,7 +15,7 @@ export function TopBar() {
   const logout = useAuthStore((s) => s.logout);
 
   return (
-    <header className="flex h-14 items-center justify-end border-b px-6">
+    <header className="flex h-14 items-center justify-end px-6">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm">
