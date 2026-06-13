@@ -20,7 +20,7 @@ Backend — **центральный hub** для всей экосистемы 
 - Cloud deploy (Timescale Cloud / AWS RDS) — отдельный спек
 
 **Target stack:**
-- Python 3.11+ (Dockerfile использует `python:3.12-slim`, локально работает на 3.11)
+- Python 3.14 (Dockerfile использует `python:3.14-slim`; та же версия в `services/bot/`)
 - FastAPI 0.115, Uvicorn, SQLAlchemy 2.0 async (`asyncpg` driver)
 - Pydantic v2 (Settings + schemas, везде `extra="forbid"`)
 - Alembic для миграций (raw SQL — Timescale-specific `create_hypertable` не выражается через ORM)
@@ -41,8 +41,20 @@ Backend — **центральный hub** для всей экосистемы 
 │ /api/devices, /devices/{id}/{revoke,…}    admin                  │
 │ /api/sensors[/{dev}/{ch}/{kind}]          admin list/get/patch   │
 │ /api/admin/tokens                         admin self-management  │
+│ /api/events                               admin list (D-5a)      │
+│ /api/devices/{id}/commands                admin enqueue/list     │
+│ /api/devices/{id}/commands/pending        device poll (D-5a)     │
+│ /api/commands/{id}/ack                    device ack   (D-5a)    │
 └──────────────────────────────────────────────────────────────────┘
 ```
+
+The `device_commands` queue (migration `0006`) is the **reverse channel**:
+admin (incl. the Telegram bot via its admin token) enqueues `pump_on` /
+`pump_off`; the coordinator firmware will poll `/commands/pending` (which
+atomically flips rows `pending → sent`) and `POST /commands/{id}/ack`. The
+firmware side is not built yet — commands sit in `pending` until it is. The
+Telegram bot is a **separate service** ([`../bot/`](../bot/)) that talks to
+this API only — it holds an admin token, never a DB connection.
 
 10 таблиц, 4 Alembic-миграции:
 - `0001_initial`: devices, sensors, readings (hypertable), events (hypertable), device_credentials

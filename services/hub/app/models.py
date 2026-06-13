@@ -156,3 +156,24 @@ class AdminUser(Base):
     username:      Mapped[str] = mapped_column(Text, primary_key=True)
     password_hash: Mapped[str] = mapped_column(Text)
     created_at:    Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True))
+
+
+class DeviceCommand(Base):
+    __tablename__ = "device_commands"
+
+    id:          Mapped[str] = mapped_column(Text, primary_key=True)
+    device_id:   Mapped[str] = mapped_column(
+        Text, ForeignKey("devices.device_id", ondelete="CASCADE")
+    )
+    command:     Mapped[str] = mapped_column(Text)
+    params_json: Mapped[Optional[dict[str, Any]]] = mapped_column(JSONB, nullable=True)
+    status:      Mapped[str] = mapped_column(Text, default="pending")
+    created_by:  Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at:  Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True))
+    claimed_at:  Mapped[Optional[datetime]] = mapped_column(
+        TIMESTAMP(timezone=True), nullable=True
+    )
+    acked_at:    Mapped[Optional[datetime]] = mapped_column(
+        TIMESTAMP(timezone=True), nullable=True
+    )
+    result_json: Mapped[Optional[dict[str, Any]]] = mapped_column(JSONB, nullable=True)
